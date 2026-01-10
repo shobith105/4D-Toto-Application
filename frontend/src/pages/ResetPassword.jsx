@@ -13,6 +13,7 @@ export default function ResetPassword() {
   useEffect(() => {
     // Check if there's a recovery token in the URL
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    console.log(hashParams);
     const accessToken = hashParams.get('access_token');
     const type = hashParams.get('type');
 
