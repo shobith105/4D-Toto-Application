@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { uploadTicket } from '../services/api';
 
 export default function UploadTicket() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -94,18 +95,11 @@ export default function UploadTicket() {
     setUploading(true);
 
     try {
-      // TODO: Connect to backend API
-      // const formData = new FormData();
-      // formData.append('ticket', selectedFile);
-      // const response = await fetch('http://localhost:8000/api/upload-ticket', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
-      // const data = await response.json();
+      // Upload ticket for immediate OCR processing
+      const result = await uploadTicket(selectedFile);
       
-      // Simulate upload for now
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      alert('Ticket uploaded successfully!');
+      alert('Ticket processed successfully!');
+      console.log('Ticket data:', result);
       
       // Reset form
       setSelectedFile(null);

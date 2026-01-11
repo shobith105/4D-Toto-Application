@@ -6,6 +6,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import './App.css'
 import UploadTicket from "./pages/UploadTicket";
+import TicketDetails from "./components/TicketDetails";
+import TicketList from "./pages/TicketList";
 
 function App() {
  
@@ -18,6 +20,7 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/home" element={<UploadTicket />} />
+      <Route path="/details" element={<TicketList />} />
 
       {/* Add more routes here as needed */}
     </Routes>
