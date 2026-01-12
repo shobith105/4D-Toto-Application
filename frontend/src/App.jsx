@@ -8,17 +8,22 @@ import './App.css'
 import UploadTicket from "./pages/UploadTicket";
 import TicketDetails from "./components/TicketDetails";
 import TicketList from "./pages/TicketList";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
  
   return (
     <Routes>
       {/*Login & Auth Routes*/}
-      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      
+      {/* App routes */}
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/home" element={<UploadTicket />} />
       <Route path="/details" element={<TicketList />} />
 
