@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
 from pydantic import ValidationError
 from uuid import UUID
 from app.models import TicketCreateData
 from app.ocr.ocr_engine import process_image_with_gemini
+from app.services.dbconfig import authorised_user, save_ticket_details
 
 router = APIRouter(prefix="/tickets", tags=["tickets"])
 
@@ -11,9 +12,12 @@ MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 
 
 @router.post("/upload")
-async def upload_ticket(file: UploadFile = File(...)):
+async def upload_ticket(file: UploadFile = File(...), user_id: UUID = Depends(authorised_user)):
     """
     Upload ticket image and extract information using Gemini OCR
+    
+    Args:
+        File: Uploaded image file of the ticket
     """
     print("reading file")
     if file.content_type not in ALLOWED_MIME:
@@ -22,7 +26,7 @@ async def upload_ticket(file: UploadFile = File(...)):
             detail="Invalid file type. Only PNG, JPEG, WEBP, and BMP are allowed.",
         )
 
-    # Simple approach (not streaming): read fully, then check size
+    #Potential bug fix for large files
     image_bytes = await file.read()
     if len(image_bytes) > MAX_FILE_SIZE:
         raise HTTPException(
@@ -36,6 +40,18 @@ async def upload_ticket(file: UploadFile = File(...)):
 
         # Pydantic v2 validation
         ticket_data = TicketCreateData.model_validate(ocr_result)
+        details=ticket_data.model_dump(mode="json")
+        
+        payload={
+            "user_id":str(user_id),
+            "game_type":ticket_data.game_type,
+            "draw_date":details["draw_date"],
+            "ticket_price":details["ticket_price"],
+            "details":details
+        }
+        
+        save_ticket_details(payload)
+        
 
         return {
             "status": "success",
