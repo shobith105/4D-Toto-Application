@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { uploadTicket } from '../services/api';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function UploadTicket() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -121,6 +122,9 @@ export default function UploadTicket() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-200 p-6">
+      {/* Loading Overlay */}
+      {uploading && <LoadingSpinner message="Processing Ticket" />}
+      
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
