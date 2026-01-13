@@ -2,7 +2,7 @@
 
 from .ticket import TicketCreateData
 from .draw import DrawResult, DrawCheckRequest
-from .ocr import OCRResult, OCRLineResult, OCRTestResponse
+
 
 __all__ = [
     "TicketCreateData", 

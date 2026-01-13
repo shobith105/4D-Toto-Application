@@ -14,7 +14,7 @@ FourDEntryType = Literal["Ordinary", "Roll", "System", "iBet"]
 
 class FourDBet(BaseModel):
     """
-    One 4D bet line. Keep it minimal but sufficient for win logic.
+    This represents one 4D bet line. Keep it minimal but sufficient for win logic.
     - Ordinary/System/iBet: use `number` (4-digit string, keep leading zeros)
     - Roll: use `roll_pattern` (4 chars with exactly one 'X', e.g. 58X2)
     """
@@ -122,7 +122,7 @@ class TotoEntry(BaseModel):
 
 class TicketCreateData(BaseModel):
     """
-    Single model your OCR returns.
+    Single model for OCR returns.
     Validator enforces the correct branch based on game_type.
     """
     game_type: Literal["4D", "TOTO"]
