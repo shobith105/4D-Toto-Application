@@ -9,6 +9,7 @@ import UploadTicket from "./pages/UploadTicket";
 import TicketDetails from "./components/TicketDetails";
 import TicketList from "./pages/TicketList";
 import Dashboard from "./pages/Dashboard";
+import Verify from "./pages/Verify";
 
 function App() {
  
@@ -24,11 +25,14 @@ function App() {
       {/* App routes */}
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/home" element={<UploadTicket />} />
+      <Route path="/verify" element={<Verify />} />
       <Route path="/details" element={<TicketList />} />
+      <Route path="/tickets" element={<TicketList />} />
 
       {/* Add more routes here as needed */}
     </Routes>
   )
 }
+
 
 export default App
