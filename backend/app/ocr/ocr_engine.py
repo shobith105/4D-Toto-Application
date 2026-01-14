@@ -17,11 +17,10 @@ def process_image_with_gemini(image_bytes: bytes, mime_type: str) -> Dict[str, A
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY is not set.")
-    print("Using Gemini API Key:", api_key[-5:])  # Print last 5 chars for verification
-
+    
     client = genai.Client(api_key=api_key)
 
-    # Generate JSON schema from your single Pydantic model
+    # Generate JSON schema from single Pydantic model
     schema = TicketCreateData.model_json_schema()
 
     prompt = (
