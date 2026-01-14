@@ -10,7 +10,7 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
     ticket_price,
     fourd_bets,  // For 4D tickets
     toto_entry   // For TOTO tickets
-  } = ticketData;
+  } = ticketData || {};
 
   // Derive bet type and system size from the appropriate field
   const bet_type = game_type === '4D' 
@@ -45,7 +45,7 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
       <div>
         <label className="block text-sm font-medium text-slate-400 mb-2">Game Type</label>
         <div className="px-4 py-3 bg-slate-700 rounded-lg border border-slate-600">
-          <span className="text-lg font-semibold text-slate-200">{game_type}</span>
+          <span className="text-lg font-semibold text-slate-200">{game_type || 'Not detected'}</span>
         </div>
       </div>
 
