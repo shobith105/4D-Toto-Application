@@ -26,7 +26,7 @@ async def upload_ticket(file: UploadFile = File(...), user_id: UUID = Depends(au
             detail="Invalid file type. Only PNG, JPEG, WEBP, and BMP are allowed.",
         )
 
-    #Potential bug fix for large files
+    #Potential bug fix needed for large files
     image_bytes = await file.read()
     if len(image_bytes) > MAX_FILE_SIZE:
         raise HTTPException(
@@ -40,18 +40,6 @@ async def upload_ticket(file: UploadFile = File(...), user_id: UUID = Depends(au
 
         # Pydantic v2 validation
         ticket_data = TicketCreateData.model_validate(ocr_result)
-        details=ticket_data.model_dump(mode="json")
-        
-        payload={
-            "user_id":str(user_id),
-            "game_type":ticket_data.game_type,
-            "draw_date":details["draw_date"],
-            "ticket_price":details["ticket_price"],
-            "details":details
-        }
-        
-        save_ticket_details(payload)
-        
 
         return {
             "status": "success",
