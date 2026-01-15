@@ -31,14 +31,33 @@ export default function Verify() {
         return;
       }
 
-      // TODO: Save ticket to database via backend API
-      console.log('Saving ticket:', data);
+      // Prepare payload for Supabase
+      const payload = {
+        user_id: user.id,
+        game_type: data.game_type,
+        draw_date: data.draw_date,
+        ticket_price: data.ticket_price,
+        details: data
+      };
+
+      console.log('Saving ticket to Supabase:', payload);
       
+      // Save to Supabase tickets table
+      const { data: savedTicket, error } = await supabase
+        .from('tickets')
+        .insert([payload])
+        .select();
+      
+      if (error) {
+        throw error;
+      }
+      
+      console.log('Ticket saved successfully:', savedTicket);
       alert('Ticket saved successfully!');
-      navigate('/tickets'); // Navigate to ticket list page
+      navigate('/tickets');
     } catch (error) {
       console.error('Save error:', error);
-      alert('Failed to save ticket. Please try again.');
+      alert(`Failed to save ticket: ${error.message}`);
     }
   };
 
