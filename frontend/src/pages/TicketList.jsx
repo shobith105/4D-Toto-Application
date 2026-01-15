@@ -1,73 +1,122 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TicketDetails from '../components/TicketDetails';
+import supabase from '../services/supabaseClient';
 
 export default function TicketList() {
   const navigate = useNavigate();
   
-  // Mock ticket data
-  const [tickets] = useState([
-    {
-      uuid: '550e8400-e29b-41d4-a716-446655440001',
-      game_type: '4D',
-      bet_type: 'standard',
-      raw_numbers: [1234, 5678, 9012],
-      draw_date: '2026-01-15',
-      purchase_date: '2026-01-10',
-      ticket_price: 3.00,
-      win_status: 'pending',
-      prize_amount: null,
-      confidence_score: 0.95
-    },
-    {
-      uuid: '550e8400-e29b-41d4-a716-446655440002',
-      game_type: 'TOTO',
-      bet_type: 'system',
-      system_size: 7,
-      raw_numbers: [5, 12, 18, 23, 31, 42, 45],
-      expanded_combos: [
-        [5, 12, 18, 23, 31, 42],
-        [5, 12, 18, 23, 31, 45],
-        [5, 12, 18, 23, 42, 45],
-        [5, 12, 18, 31, 42, 45],
-        [5, 12, 23, 31, 42, 45],
-        [5, 18, 23, 31, 42, 45],
-        [12, 18, 23, 31, 42, 45]
-      ],
-      draw_date: '2026-01-18',
-      purchase_date: '2026-01-11',
-      ticket_price: 7.00,
-      win_status: 'pending',
-      prize_amount: null,
-      confidence_score: 0.85
-    },
-    {
-      uuid: '550e8400-e29b-41d4-a716-446655440003',
-      game_type: 'TOTO',
-      bet_type: 'standard',
-      raw_numbers: [7, 14, 21, 28, 35, 42],
-      draw_date: '2026-01-08',
-      purchase_date: '2026-01-05',
-      ticket_price: 1.00,
-      win_status: 'loss',
-      prize_amount: 0,
-      confidence_score: 0.99
-    },
-    {
-      uuid: '550e8400-e29b-41d4-a716-446655440004',
-      game_type: '4D',
-      bet_type: 'standard',
-      raw_numbers: [8888],
-      draw_date: '2026-01-05',
-      purchase_date: '2026-01-03',
-      ticket_price: 1.00,
-      win_status: 'win',
-      prize_amount: 2500,
-      confidence_score: 0.65
-    },
-  ]);
-
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedTicket, setSelectedTicket] = useState(null);
+
+  // Fetch tickets from Supabase
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        setLoading(true);
+        
+        // Get current user
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          navigate('/login');
+          return;
+        }
+
+        // Fetch tickets for current user
+        const { data, error } = await supabase
+          .from('tickets')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Map database format to component format
+        const mappedTickets = data.map(ticket => {
+          const details = ticket.details;
+          
+          // Extract numbers based on game type
+          let raw_numbers = [];
+          let bet_type = 'standard';
+          let system_size = null;
+          let expanded_combos = null;
+
+          if (ticket.game_type === '4D') {
+            // Extract 4D numbers from bets array
+            if (details.bets && Array.isArray(details.bets)) {
+              raw_numbers = details.bets.map(bet => bet.number || bet.roll_pattern);
+              bet_type = details.bets[0]?.entry_type?.toLowerCase() || 'ordinary';
+            }
+          } else if (ticket.game_type === 'TOTO') {
+            // Extract TOTO numbers from entries array
+            if (details.entries && Array.isArray(details.entries)) {
+              const entry = details.entries[0];
+              raw_numbers = entry.numbers || [];
+              bet_type = entry.bet_type?.toLowerCase() || 'ordinary';
+              system_size = entry.system_size;
+              
+              // If it's a system bet, we might need to calculate combinations
+              // For now, we'll just show the numbers
+            }
+          }
+
+          return {
+            uuid: ticket.id,
+            game_type: ticket.game_type,
+            bet_type: bet_type,
+            system_size: system_size,
+            raw_numbers: raw_numbers,
+            draw_date: ticket.draw_date,
+            purchase_date: details.purchase_date || ticket.created_at,
+            ticket_price: ticket.ticket_price,
+            win_status: ticket.status || 'pending',
+            prize_amount: null, // TODO: Add when checking results
+            confidence_score: details.confidence_score || 1.0,
+            details: details // Keep full details for TicketDetails component
+          };
+        });
+
+        setTickets(mappedTickets);
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTickets();
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-slate-200 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-fuchsia-500 border-r-transparent mb-4"></div>
+          <p className="text-slate-400">Loading tickets...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-slate-200 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-400 mb-4">Error loading tickets: {error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -117,7 +166,7 @@ export default function TicketList() {
         {/* Tickets List */}
         {selectedTicket ? (
           <TicketDetails 
-            ticketData={selectedTicket}
+            ticketData={selectedTicket.details || selectedTicket}
             onConfirm={(data) => {
               console.log('Confirmed ticket:', data);
               setSelectedTicket(null);
