@@ -14,11 +14,9 @@ UA = (
 )
 
 BASE_TOTO_URL = "https://www.singaporepools.com.sg/en/product/pages/toto_results.aspx"
-load_dotenv()
-url = os.getenv("VITE_SUPABASE_URL")
-key = os.getenv("VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY")
+url = os.environ["SUPABASE_URL"]
+key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
 supabase = create_client(url, key)
-
 
 def make_sppl(draw_no: int) -> str:
     """

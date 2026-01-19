@@ -14,9 +14,8 @@ UA = (
 )
 
 BASE_4D_URL = "https://www.singaporepools.com.sg/en/product/pages/4d_results.aspx"
-load_dotenv()
-url=os.getenv("VITE_SUPABASE_URL")
-key=os.getenv("VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY")
+url = os.environ["SUPABASE_URL"]
+key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
 supabase = create_client(url, key)
 
 
