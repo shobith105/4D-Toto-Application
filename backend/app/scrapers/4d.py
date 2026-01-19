@@ -200,7 +200,7 @@ def get_latest_draw_no() -> int:
     else:
         # No draws found, start with a default number
         print("[INFO] No draws found in DB, using default starting draw number")
-        return 5432  # You can adjust this default starting number
+        return 5431
 
 
 def upsert_draw_result(payload: dict) -> bool:
