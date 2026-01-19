@@ -54,10 +54,6 @@ def fetch_html(url: str) -> str:
     r.raise_for_status()
     return r.text
 
-
-import re
-from bs4 import BeautifulSoup
-
 def parse_4d_tables_wrap(html: str) -> dict:
     """
     Parse Singapore Pools 4D results from the <div class="tables-wrap"> container.
