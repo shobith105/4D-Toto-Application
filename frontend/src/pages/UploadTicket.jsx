@@ -294,7 +294,7 @@ export default function UploadTicket() {
         {/* Back Button */}
         <div className="text-center mt-6">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/dashboard')}
             className="text-slate-400 hover:text-fuchsia-500 font-medium transition-colors"
           >
             ← Back to Dashboard
