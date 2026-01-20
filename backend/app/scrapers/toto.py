@@ -14,6 +14,8 @@ UA = (
 )
 
 BASE_TOTO_URL = "https://www.singaporepools.com.sg/en/product/pages/toto_results.aspx"
+
+load_dotenv()
 url = os.environ["SUPABASE_URL"]
 key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
 supabase = create_client(url, key)
@@ -214,7 +216,7 @@ def get_latest_draw_no() -> int:
         return latest_draw + 1
     else:
         print("[INFO] No TOTO draws found in DB, using default starting draw number")
-        return 4149 
+        return 3866 
 
 
 def upsert_draw_result(payload: dict) -> bool:
