@@ -10,6 +10,7 @@ import TicketDetails from "./components/TicketDetails";
 import TicketList from "./pages/TicketList";
 import Dashboard from "./pages/Dashboard";
 import Verify from "./pages/Verify";
+import Notifications from "./pages/Notifications";
 
 function App() {
  
@@ -28,6 +29,7 @@ function App() {
       <Route path="/verify" element={<Verify />} />
       <Route path="/details" element={<TicketList />} />
       <Route path="/tickets" element={<TicketList />} />
+      <Route path="/notifications" element={<Notifications />} />
 
       {/* Add more routes here as needed */}
     </Routes>
