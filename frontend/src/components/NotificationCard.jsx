@@ -1,6 +1,6 @@
 import React from 'react';
 
-const NotificationCard = ({ notification, onMarkAsRead }) => {
+const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
   const { id, type, title, message, data, is_read, created_at } = notification;
 
   // Parse the data field if it exists
@@ -133,14 +133,24 @@ const NotificationCard = ({ notification, onMarkAsRead }) => {
           {/* Footer */}
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-500">{formatDate(created_at)}</span>
-            {!is_read && onMarkAsRead && (
-              <button
-                onClick={() => onMarkAsRead(id)}
-                className="text-sm px-4 py-2 bg-fuchsia-500/20 hover:bg-fuchsia-500/30 text-fuchsia-400 rounded-md transition-colors border border-fuchsia-500/30 hover:border-fuchsia-500/50"
-              >
-                Mark as Read
-              </button>
-            )}
+            <div className="flex gap-2">
+              {!is_read && onMarkAsRead && (
+                <button
+                  onClick={() => onMarkAsRead(id)}
+                  className="text-sm px-4 py-2 bg-fuchsia-500/20 hover:bg-fuchsia-500/30 text-fuchsia-400 rounded-md transition-colors border border-fuchsia-500/30 hover:border-fuchsia-500/50"
+                >
+                  Mark as Read
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  onClick={() => onDelete(id)}
+                  className="text-sm px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-md transition-colors border border-red-500/30 hover:border-red-500/50"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

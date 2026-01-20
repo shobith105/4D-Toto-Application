@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import NotificationCard from '../components/NotificationCard';
 import LoadingSpinner from '../components/LoadingSpinner';
-import supabase from '../services/supabaseClient';
+import { 
+  getNotifications, 
+  createMockNotification, 
+  markNotificationAsRead, 
+  markAllNotificationsAsRead,
+  deleteNotification 
+} from '../services/api';
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -16,22 +22,8 @@ const Notifications = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        console.error('No user found');
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      setNotifications(data || []);
+      const data = await getNotifications();
+      setNotifications(data.notifications || []);
     } catch (error) {
       console.error('Error fetching notifications:', error);
       alert('Failed to load notifications. Please try again.');
@@ -40,28 +32,9 @@ const Notifications = () => {
     }
   };
 
-  const createMockNotification = async () => {
+  const handleCreateMockNotification = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        alert('Please login first');
-        return;
-      }
-
-      const response = await fetch('http://localhost:8000/api/notifications/mock', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create mock notification');
-      }
-
-      // Refresh notifications after creating mock
+      await createMockNotification();
       await fetchNotifications();
       alert('Mock notification created successfully!');
     } catch (error) {
@@ -72,13 +45,8 @@ const Notifications = () => {
 
   const handleMarkAsRead = async (notificationId) => {
     try {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', notificationId);
-
-      if (error) throw error;
-
+      await markNotificationAsRead(notificationId);
+      
       // Update local state
       setNotifications(notifications.map(notif =>
         notif.id === notificationId ? { ...notif, is_read: true } : notif
@@ -91,23 +59,25 @@ const Notifications = () => {
 
   const handleMarkAllAsRead = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      await markAllNotificationsAsRead();
       
-      if (!user) return;
-
-      const { error } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', user.id)
-        .eq('is_read', false);
-
-      if (error) throw error;
-
       // Update local state
       setNotifications(notifications.map(notif => ({ ...notif, is_read: true })));
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
       alert('Failed to mark all notifications as read.');
+    }
+  };
+
+  const handleDeleteNotification = async (notificationId) => {
+    try {
+      await deleteNotification(notificationId);
+      
+      // Remove from local state
+      setNotifications(notifications.filter(notif => notif.id !== notificationId));
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      alert('Failed to delete notification.');
     }
   };
 
@@ -143,7 +113,7 @@ const Notifications = () => {
                 onClick={createMockNotification}
                 className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-semibold"
               >
-                Create Mock Notification
+                Create MohandleCk Notification
               </button>
               {unreadCount > 0 && (
                 <button
@@ -226,6 +196,7 @@ const Notifications = () => {
                 key={notification.id}
                 notification={notification}
                 onMarkAsRead={handleMarkAsRead}
+                onDelete={handleDeleteNotification}
               />
             ))}
           </div>
