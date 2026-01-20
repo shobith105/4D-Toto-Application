@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import tickets, results, predictions
+from app.api import tickets, results, predictions, notifications
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,6 +11,7 @@ app = FastAPI()
 app.include_router(tickets.router, prefix="/api")
 app.include_router(results.router, prefix="/api")
 app.include_router(predictions.router, prefix="/api")
+app.include_router(notifications.router, prefix="/api")
 
 origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
