@@ -70,9 +70,6 @@ export default function LoadingSpinner({ message = "Processing..." }) {
               <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
               <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
             </div>
-            <p className="text-sm text-slate-400 mt-4">
-              Analyzing your ticket with AI...
-            </p>
           </div>
 
           {/* Progress bar */}
