@@ -38,3 +38,88 @@ export async function uploadTicket(file) {
         throw error;
     }
 }
+
+/**
+ * Get all notifications for the authenticated user
+ */
+export async function getNotifications() {
+    try {
+        const authHeaders = await getAuthHeaders();
+        
+        const response = await axios.get(`${API_URL}/notifications`, {
+            headers: authHeaders
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching notifications:", error);
+        throw error;
+    }
+}
+
+/**
+ * Create a mock notification for testing
+ */
+export async function createMockNotification() {
+    try {
+        const authHeaders = await getAuthHeaders();
+        
+        const response = await axios.post(`${API_URL}/notifications/mock`, {}, {
+            headers: authHeaders
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error creating mock notification:", error);
+        throw error;
+    }
+}
+
+/**
+ * Mark a notification as read
+ */
+export async function markNotificationAsRead(notificationId) {
+    try {
+        const authHeaders = await getAuthHeaders();
+        
+        const response = await axios.patch(`${API_URL}/notifications/${notificationId}/read`, {}, {
+            headers: authHeaders
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error marking notification as read:", error);
+        throw error;
+    }
+}
+
+/**
+ * Mark all notifications as read
+ */
+export async function markAllNotificationsAsRead() {
+    try {
+        const authHeaders = await getAuthHeaders();
+        
+        const response = await axios.patch(`${API_URL}/notifications/mark-all-read`, {}, {
+            headers: authHeaders
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error marking all notifications as read:", error);
+        throw error;
+    }
+}
+
+/**
+ * Delete a notification
+ */
+export async function deleteNotification(notificationId) {
+    try {
+        const authHeaders = await getAuthHeaders();
+        
+        const response = await axios.delete(`${API_URL}/notifications/${notificationId}`, {
+            headers: authHeaders
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting notification:", error);
+        throw error;
+    }
+}
