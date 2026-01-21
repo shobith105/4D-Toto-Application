@@ -45,6 +45,14 @@ def process_image_with_gemini(image_bytes: bytes, mime_type: str) -> Dict[str, A
     "- Set game_type='4D'\n"
     "- Set toto_entries=null and toto_entry=null\n"
     "- Extract fourd_bets as an array of bet lines.\n"
+    "- You MUST look out for Big and Small bets for each line.\n"
+    '''CRITICAL 4D STAKES RULE:
+- For EACH 4D bet line (A., B., C., etc.), extract the stake amounts shown beside BIG and SML.
+- They appear like: "BIG $10" and "SML $10" on the SAME line as the 4-digit number.
+- Set big_amount and small_amount as numbers (e.g., 10 or 10.0). Do NOT leave them as 0 unless the ticket explicitly shows 0 or the stake is absent.
+- If the ticket shows only BIG (no SML), set small_amount=0. If only SML, set big_amount=0.
+- Use the printed PRICE as a consistency check: sum of all (big_amount + small_amount) across all bet lines should equal ticket_price.
+'''
     "  (keep your existing 4D rules...)\n\n"
 
     "If the ticket is TOTO:\n"
