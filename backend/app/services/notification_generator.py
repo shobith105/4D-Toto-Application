@@ -79,7 +79,6 @@ def create_win_notification(ticket_check: Dict[str, Any]) -> Dict[str, Any]:
     Create a notification for a winning ticket check.
     """
     try:
-        # Dedup
         if _notification_exists(ticket_check["id"]):
             # return the existing id (optional)
             existing = supabase.table("notifications").select("*").eq("data->>ticket_check_id", str(ticket_check["id"])).single().execute()
@@ -93,7 +92,7 @@ def create_win_notification(ticket_check: Dict[str, Any]) -> Dict[str, Any]:
         user_id = ticket.get("user_id")
         game_type = (ticket.get("game_type") or "").upper()
 
-        # Draw (IMPORTANT: ticket_check.draw_id is draw_results.uid in your checker)
+        # Draw (IMPORTANT: ticket_check.draw_id is draw_results.uid )
         draw_response = supabase.table("draw_results").select("*").eq("uid", ticket_check["draw_id"]).single().execute()
         if not draw_response.data:
             raise ValueError(f"Draw not found: {ticket_check['draw_id']}")
@@ -148,7 +147,6 @@ def create_loss_notification(ticket_check: Dict[str, Any]) -> Dict[str, Any]:
     Create a notification for a losing ticket check.
     """
     try:
-        # Dedup
         if _notification_exists(ticket_check["id"]):
             existing = supabase.table("notifications").select("*").eq("data->>ticket_check_id", str(ticket_check["id"])).single().execute()
             return existing.data or {}
