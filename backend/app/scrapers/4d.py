@@ -107,17 +107,17 @@ def parse_4d_tables_wrap(html: str) -> dict:
     if first_prize:
         num = cell_4d(first_prize)
         if num:
-            top_prizes["first"] = int(num)
+            top_prizes["first"] = num
     
     if second_prize:
         num = cell_4d(second_prize)
         if num:
-            top_prizes["second"] = int(num)
+            top_prizes["second"] = num
     
     if third_prize:
         num = cell_4d(third_prize)
         if num:
-            top_prizes["third"] = int(num)
+            top_prizes["third"] = num
 
     # --- Table 2: starter prizes ---
     starter = []
