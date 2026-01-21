@@ -75,15 +75,22 @@ class TotoSystemRoll(BaseModel):
 
 
 class TotoEntry(BaseModel):
+    label: Optional[str] = None  # "A", "B", etc.
     bet_type: TotoBetType
-
-    # Ordinary: exactly 6 numbers
-    # System: numbers length = system_size (7..12)
     numbers: Optional[List[conint(ge=1, le=49)]] = None
-
-    system_size: Optional[SystemSize] = None
+    system_size: Optional[conint(ge=7, le=12)] = None
     system_roll: Optional[TotoSystemRoll] = None
 
+    @model_validator(mode="before")
+    @classmethod
+    def _normalize(cls, data):
+        if isinstance(data, dict):
+            bt = data.get("bet_type")
+            nums = data.get("numbers")
+            if bt == "System" and isinstance(nums, list) and data.get("system_size") is None:
+                if 7 <= len(nums) <= 12:
+                    data["system_size"] = len(nums)
+        return data
     
 
     @model_validator(mode="after")
@@ -121,18 +128,16 @@ class TotoEntry(BaseModel):
 # -------------------------
 
 class TicketCreateData(BaseModel):
-    """
-    Single model for OCR returns.
-    Validator enforces the correct branch based on game_type.
-    """
     game_type: Literal["4D", "TOTO"]
-    draw_date: date                 # OCR should output ISO: YYYY-MM-DD
+    draw_date: date
     ticket_price: confloat(ge=0)
 
-    # 4D branch
-    fourd_bets: Optional[List[FourDBet]] = None
+    fourd_bets: Optional[list] = None  # keep your actual type here
 
-    # TOTO branch
+    # NEW
+    toto_entries: Optional[List[TotoEntry]] = None
+
+    # OLD (optional) left here to prevent things from breaking for now
     toto_entry: Optional[TotoEntry] = None
 
     @model_validator(mode="after")
@@ -140,13 +145,22 @@ class TicketCreateData(BaseModel):
         if self.game_type == "4D":
             if not self.fourd_bets:
                 raise ValueError("4D tickets require fourd_bets.")
-            if self.toto_entry is not None:
-                raise ValueError("4D tickets must have toto_entry=null.")
+            if self.toto_entry is not None or self.toto_entries is not None:
+                raise ValueError("4D tickets must have TOTO fields null.")
+            return self
 
-        if self.game_type == "TOTO":
-            if self.toto_entry is None:
-                raise ValueError("TOTO tickets require toto_entry.")
-            if self.fourd_bets is not None:
-                raise ValueError("TOTO tickets must have fourd_bets=null.")
+        # game_type == "TOTO"
+        if self.fourd_bets is not None:
+            raise ValueError("TOTO tickets must have fourd_bets=null.")
 
-        return self
+        # Accept either
+        if self.toto_entries and len(self.toto_entries) > 0:
+            self.toto_entry = None
+            return self
+
+        if self.toto_entry is not None:
+            self.toto_entries = [self.toto_entry]
+            self.toto_entry = None
+            return self
+
+        raise ValueError("TOTO tickets require toto_entries (or toto_entry).")
