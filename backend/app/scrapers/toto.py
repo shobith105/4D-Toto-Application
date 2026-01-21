@@ -249,8 +249,8 @@ def upsert_draw_result(payload: dict) -> bool:
         "draw_no": draw_no,
         "draw_date": payload.get("draw_date"),
         "result": {
-            "winning_numbers": payload.get("winning_numbers"),
-            "additional_number": payload.get("additional_number"),
+            "winning_numbers": [int(n) for n in payload.get("winning_numbers")],
+            "additional_number": int(payload.get("additional_number")),
             "prize_groups": payload.get("prize_groups"),
         }
     }
