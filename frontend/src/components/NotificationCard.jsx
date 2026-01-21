@@ -139,33 +139,157 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
               {/* Ticket Numbers - TOTO format with entries */}
               {parsedData.ticket_numbers && Array.isArray(parsedData.ticket_numbers) && parsedData.ticket_numbers.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-slate-700">
-                  <div className="text-slate-400 text-sm mb-3">Your Numbers:</div>
+                  <div className="text-slate-400 text-sm mb-3 font-semibold">Your Ticket Numbers:</div>
                   <div className="space-y-3">
-                    {parsedData.ticket_numbers.map((entry, idx) => (
-                      <div key={idx} className="flex items-center gap-2">
-                        {entry.label && (
-                          <span className="text-slate-500 font-medium min-w-[20px]">{entry.label}.</span>
-                        )}
-                        <div className="flex flex-wrap gap-2">
-                          {entry.numbers && entry.numbers.map((num, numIdx) => (
-                            <span
-                              key={numIdx}
-                              className="inline-flex items-center justify-center w-8 h-8 bg-slate-800 text-slate-200 font-semibold text-sm rounded border border-slate-600"
-                            >
-                              {num}
-                            </span>
-                          ))}
+                    {parsedData.game_type === 'TOTO' ? (
+                      // TOTO format
+                      parsedData.ticket_numbers.map((entry, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          {entry.label && (
+                            <span className="text-slate-500 font-medium min-w-[20px]">{entry.label}.</span>
+                          )}
+                          <div className="flex flex-wrap gap-2">
+                            {entry.numbers && entry.numbers.map((num, numIdx) => (
+                              <span
+                                key={numIdx}
+                                className="inline-flex items-center justify-center w-8 h-8 bg-slate-800 text-slate-200 font-semibold text-sm rounded border border-slate-600"
+                              >
+                                {num}
+                              </span>
+                            ))}
+                          </div>
                         </div>
+                      ))
+                    ) : parsedData.game_type === '4D' ? (
+                      // 4D format
+                      <div className="flex flex-wrap gap-2">
+                        {parsedData.ticket_numbers.map((bet, idx) => {
+                          // Handle both formats: {number, bet_type} or just string
+                          const betNumber = typeof bet === 'string' ? bet : bet.number;
+                          const betType = typeof bet === 'object' ? (bet.bet_type || bet.entry_type || 'Ordinary') : 'Ordinary';
+                          
+                          return (
+                            <div key={idx} className="bg-slate-800/50 rounded-lg px-3 py-2 border border-slate-600">
+                              <div className="text-xs text-slate-500 mb-1">{betType}</div>
+                              <div className="text-lg font-bold text-slate-200 tracking-wider">{betNumber}</div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    ))}
+                    ) : null}
                   </div>
                 </div>
               )}
 
-              {/* Winning Numbers */}
+              {/* Draw Winning Numbers */}
+              {parsedData.draw_winning_numbers && (
+                <div className="mt-4 pt-4 border-t border-slate-700">
+                  <div className="text-slate-400 text-sm mb-3 font-semibold">Draw Winning Numbers:</div>
+                  
+                  {parsedData.game_type === 'TOTO' && (
+                    <div className="space-y-3">
+                      <div>
+                        <div className="text-xs text-slate-500 mb-2">Main Numbers</div>
+                        <div className="flex flex-wrap gap-2">
+                          {parsedData.draw_winning_numbers.winning_numbers && 
+                            parsedData.draw_winning_numbers.winning_numbers.map((num, idx) => (
+                              <span
+                                key={idx}
+                                className="inline-flex items-center justify-center w-10 h-10 bg-blue-500/20 text-blue-300 font-bold text-base rounded-full border-2 border-blue-500/50"
+                              >
+                                {num}
+                              </span>
+                            ))
+                          }
+                        </div>
+                      </div>
+                      {parsedData.draw_winning_numbers.additional_number && (
+                        <div>
+                          <div className="text-xs text-slate-500 mb-2">Additional Number</div>
+                          <span className="inline-flex items-center justify-center w-10 h-10 bg-amber-500/20 text-amber-300 font-bold text-base rounded-full border-2 border-amber-500/50">
+                            {parsedData.draw_winning_numbers.additional_number}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {parsedData.game_type === '4D' && (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-3 gap-3">
+                        {parsedData.draw_winning_numbers.first && (
+                          <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-lg p-3 border border-yellow-500/50">
+                            <div className="text-xs text-yellow-300 mb-1 font-semibold">1st Prize</div>
+                            <div className="text-2xl font-bold text-yellow-200 tracking-wider">{parsedData.draw_winning_numbers.first}</div>
+                          </div>
+                        )}
+                        {parsedData.draw_winning_numbers.second && (
+                          <div className="bg-gradient-to-br from-slate-400/20 to-slate-500/20 rounded-lg p-3 border border-slate-400/50">
+                            <div className="text-xs text-slate-300 mb-1 font-semibold">2nd Prize</div>
+                            <div className="text-2xl font-bold text-slate-200 tracking-wider">{parsedData.draw_winning_numbers.second}</div>
+                          </div>
+                        )}
+                        {parsedData.draw_winning_numbers.third && (
+                          <div className="bg-gradient-to-br from-orange-600/20 to-orange-700/20 rounded-lg p-3 border border-orange-600/50">
+                            <div className="text-xs text-orange-300 mb-1 font-semibold">3rd Prize</div>
+                            <div className="text-2xl font-bold text-orange-200 tracking-wider">{parsedData.draw_winning_numbers.third}</div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {parsedData.draw_winning_numbers.starter && parsedData.draw_winning_numbers.starter.length > 0 && (
+                        <div>
+                          <div className="text-xs text-slate-500 mb-2">Starter Prizes</div>
+                          <div className="flex flex-wrap gap-2">
+                            {parsedData.draw_winning_numbers.starter.map((num, idx) => (
+                              <span key={idx} className="inline-flex items-center justify-center px-2 py-1 bg-slate-800/50 text-slate-300 font-mono text-sm rounded border border-slate-600">
+                                {num}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {parsedData.draw_winning_numbers.consolation && parsedData.draw_winning_numbers.consolation.length > 0 && (
+                        <div>
+                          <div className="text-xs text-slate-500 mb-2">Consolation Prizes</div>
+                          <div className="flex flex-wrap gap-2">
+                            {parsedData.draw_winning_numbers.consolation.map((num, idx) => (
+                              <span key={idx} className="inline-flex items-center justify-center px-2 py-1 bg-slate-800/50 text-slate-300 font-mono text-sm rounded border border-slate-600">
+                                {num}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {parsedData.draw_winning_numbers.your_matches && parsedData.draw_winning_numbers.your_matches.length > 0 && (
+                        <div className="bg-green-500/10 rounded-lg p-3 border border-green-500/30 mt-3">
+                          <div className="text-sm text-green-300 font-semibold mb-2">🎉 Your Winning Numbers:</div>
+                          <div className="space-y-2">
+                            {parsedData.draw_winning_numbers.your_matches.map((match, idx) => (
+                              <div key={idx} className="flex items-center justify-between text-sm">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-xl font-bold text-green-200 tracking-wider">{match.number}</span>
+                                  <span className="px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs font-semibold uppercase">
+                                    {match.category}
+                                  </span>
+                                </div>
+                                <span className="text-green-300 font-bold">${match.payout}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Winning Combinations (TOTO) */}
               {parsedData.winning_combos && Array.isArray(parsedData.winning_combos) && parsedData.winning_combos.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-slate-700">
-                  <div className="text-slate-400 text-sm mb-3">Your Winning Combinations:</div>
+                  <div className="text-slate-400 text-sm mb-3 font-semibold">Your Winning Combinations:</div>
                   <div className="space-y-3">
                     {parsedData.winning_combos.map((combo, idx) => (
                       <div key={idx} className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
