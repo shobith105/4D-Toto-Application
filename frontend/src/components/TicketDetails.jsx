@@ -8,21 +8,14 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
     game_type,
     draw_date,
     ticket_price,
-    fourd_bets,  // For 4D tickets
-    toto_entry   // For TOTO tickets
+    fourd_bets,     // For 4D tickets
+    toto_entries    // For TOTO tickets (array)
   } = ticketData || {};
 
-  // Derive bet type and system size from the appropriate field
+  // Derive bet type from the first entry for display purposes
   const bet_type = game_type === '4D' 
     ? (fourd_bets?.[0]?.entry_type || 'Ordinary')
-    : (toto_entry?.bet_type || 'Ordinary');
-  
-  const system_size = game_type === 'TOTO' && toto_entry?.bet_type === 'System' 
-    ? toto_entry.system_size 
-    : null;
-
-  // Get numbers for TOTO
-  const toto_numbers = game_type === 'TOTO' ? (toto_entry?.numbers || []) : [];
+    : (toto_entries?.[0]?.bet_type || 'Ordinary');
 
   const handleConfirm = () => {
     if (onConfirm) {
@@ -49,21 +42,20 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
         </div>
       </div>
 
-      {/* Bet Type */}
-      <div>
-        <label className="block text-sm font-medium text-slate-400 mb-2">Bet Type</label>
-        <div className="px-4 py-3 bg-slate-700 rounded-lg border border-slate-600">
-          <span className="text-lg font-semibold text-slate-200 capitalize">{bet_type}</span>
-          {game_type === 'TOTO' && bet_type === 'System' && system_size && (
-            <span className="ml-2 text-sm text-slate-400">(System {system_size})</span>
-          )}
+      {/* Bet Type - only show for 4D or if all TOTO entries have the same type */}
+      {game_type === '4D' && (
+        <div>
+          <label className="block text-sm font-medium text-slate-400 mb-2">Bet Type</label>
+          <div className="px-4 py-3 bg-slate-700 rounded-lg border border-slate-600">
+            <span className="text-lg font-semibold text-slate-200 capitalize">{bet_type}</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Numbers */}
       <div>
         <label className="block text-sm font-medium text-slate-400 mb-2">
-          {game_type === '4D' ? '4D Entries' : 'TOTO Numbers'}
+          {game_type === '4D' ? '4D Entries' : 'TOTO Entries'}
         </label>
         <div className="px-4 py-3 bg-slate-700 rounded-lg border border-slate-600">
           {game_type === '4D' && fourd_bets && fourd_bets.length > 0 ? (
@@ -101,36 +93,51 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
                 </div>
               ))}
             </div>
-          ) : game_type === 'TOTO' ? (
-            <div>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {toto_numbers.map((num, index) => (
-                  <span 
-                    key={index}
-                    className="inline-flex items-center justify-center w-12 h-12 bg-fuchsia-500/20 text-fuchsia-300 font-bold text-lg rounded-lg"
-                  >
-                    {num}
-                  </span>
-                ))}
-              </div>
-              {toto_entry?.bet_type === 'SystemRoll' && toto_entry.system_roll && (
-                <div className="mt-4 p-3 bg-slate-800 rounded-lg border border-slate-600">
-                  <div className="text-sm text-slate-400 mb-2">System Roll</div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-slate-300">Fixed Numbers:</span>
-                    <div className="flex gap-1">
-                      {toto_entry.system_roll.fixed_numbers.map((num, i) => (
-                        <span key={i} className="inline-flex items-center justify-center w-8 h-8 bg-slate-700 text-slate-300 font-semibold text-xs rounded">
-                          {num}
-                        </span>
-                      ))}
+          ) : game_type === 'TOTO' && toto_entries && toto_entries.length > 0 ? (
+            <div className="space-y-4">
+              {toto_entries.map((entry, index) => (
+                <div key={index} className="p-4 bg-slate-800 rounded-lg border border-slate-600">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-slate-400 font-medium">{entry.label || String.fromCharCode(65 + index)}.</span>
+                      <div>
+                        <span className="text-xs text-slate-500 uppercase">{entry.bet_type}</span>
+                        {entry.bet_type === 'System' && entry.system_size && (
+                          <span className="ml-2 text-xs text-slate-400">(System {entry.system_size})</span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div className="mt-2 text-sm text-slate-400">
-                    Roll Range: {toto_entry.system_roll.roll_from} - {toto_entry.system_roll.roll_to}
+                  <div className="flex flex-wrap gap-2 ml-8">
+                    {entry.numbers && entry.numbers.map((num, numIndex) => (
+                      <span 
+                        key={numIndex}
+                        className="inline-flex items-center justify-center w-12 h-12 bg-fuchsia-500/20 text-fuchsia-300 font-bold text-lg rounded-lg"
+                      >
+                        {num}
+                      </span>
+                    ))}
                   </div>
+                  {entry.bet_type === 'SystemRoll' && entry.system_roll && (
+                    <div className="mt-4 ml-8 p-3 bg-slate-900 rounded-lg border border-slate-700">
+                      <div className="text-sm text-slate-400 mb-2">System Roll</div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-slate-300">Fixed Numbers:</span>
+                        <div className="flex gap-1">
+                          {entry.system_roll.fixed_numbers.map((num, i) => (
+                            <span key={i} className="inline-flex items-center justify-center w-8 h-8 bg-slate-700 text-slate-300 font-semibold text-xs rounded">
+                              {num}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="mt-2 text-sm text-slate-400">
+                        Roll Range: {entry.system_roll.roll_from} - {entry.system_roll.roll_to}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
             </div>
           ) : (
             <div className="text-slate-400 text-center py-4">No entries found</div>
