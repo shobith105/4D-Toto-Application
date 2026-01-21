@@ -108,25 +108,88 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
                     <span className="ml-2 text-slate-200 font-semibold">{parsedData.draw_date}</span>
                   </div>
                 )}
-                {parsedData.prize_amount && (
+                {parsedData.draw_no && (
+                  <div>
+                    <span className="text-slate-400">Draw Number:</span>
+                    <span className="ml-2 text-slate-200 font-semibold">#{parsedData.draw_no}</span>
+                  </div>
+                )}
+                {(parsedData.prize_amount || parsedData.total_payout) && (
                   <div>
                     <span className="text-slate-400">Prize Amount:</span>
-                    <span className="ml-2 text-green-400 font-semibold">${parsedData.prize_amount}</span>
+                    <span className="ml-2 text-green-400 font-semibold">
+                      ${parsedData.prize_amount || parsedData.total_payout}
+                    </span>
                   </div>
                 )}
-                {parsedData.ticket_numbers && (
-                  <div className="col-span-2">
-                    <span className="text-slate-400">Ticket Numbers:</span>
-                    <span className="ml-2 text-slate-200 font-semibold">{parsedData.ticket_numbers}</span>
+                {parsedData.prize_group && (
+                  <div>
+                    <span className="text-slate-400">Prize Group:</span>
+                    <span className="ml-2 text-fuchsia-400 font-semibold">Group {parsedData.prize_group}</span>
                   </div>
                 )}
-                {parsedData.winning_numbers && (
-                  <div className="col-span-2">
-                    <span className="text-slate-400">Winning Numbers:</span>
-                    <span className="ml-2 text-fuchsia-400 font-semibold">{parsedData.winning_numbers}</span>
+                {parsedData.winning_combinations && (
+                  <div>
+                    <span className="text-slate-400">Winning Combinations:</span>
+                    <span className="ml-2 text-green-400 font-semibold">{parsedData.winning_combinations}</span>
                   </div>
                 )}
               </div>
+
+              {/* Ticket Numbers - TOTO format with entries */}
+              {parsedData.ticket_numbers && Array.isArray(parsedData.ticket_numbers) && parsedData.ticket_numbers.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-slate-700">
+                  <div className="text-slate-400 text-sm mb-3">Your Numbers:</div>
+                  <div className="space-y-3">
+                    {parsedData.ticket_numbers.map((entry, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        {entry.label && (
+                          <span className="text-slate-500 font-medium min-w-[20px]">{entry.label}.</span>
+                        )}
+                        <div className="flex flex-wrap gap-2">
+                          {entry.numbers && entry.numbers.map((num, numIdx) => (
+                            <span
+                              key={numIdx}
+                              className="inline-flex items-center justify-center w-8 h-8 bg-slate-800 text-slate-200 font-semibold text-sm rounded border border-slate-600"
+                            >
+                              {num}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Winning Numbers */}
+              {parsedData.winning_combos && Array.isArray(parsedData.winning_combos) && parsedData.winning_combos.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-slate-700">
+                  <div className="text-slate-400 text-sm mb-3">Your Winning Combinations:</div>
+                  <div className="space-y-3">
+                    {parsedData.winning_combos.map((combo, idx) => (
+                      <div key={idx} className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs text-slate-500">
+                            Prize Group {combo.prize_group} • {combo.main_matches} matches
+                            {combo.has_additional && ' + Additional'}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {combo.combination && combo.combination.map((num, numIdx) => (
+                            <span
+                              key={numIdx}
+                              className="inline-flex items-center justify-center w-10 h-10 bg-green-500/20 text-green-300 font-bold text-base rounded border border-green-500/50"
+                            >
+                              {num}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
