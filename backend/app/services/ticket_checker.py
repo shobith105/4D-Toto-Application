@@ -5,26 +5,94 @@ Evaluates user tickets against official draw results and persists outcomes.
 
 from itertools import combinations
 from typing import List, Dict, Any, Optional
-from uuid import UUID
+from collections import Counter
+import re
+
 from app.services.dbconfig import supabase
 from fastapi import HTTPException
 
 
-def generate_combinations(numbers: List[int], system: int) -> List[List[int]]:
+# -------------------------
+# Helpers
+# -------------------------
+
+def _to_int_list(xs) -> List[int]:
+    """Defensively coerce list elements to int."""
+    if not xs:
+        return []
+    out = []
+    for x in xs:
+        try:
+            out.append(int(x))
+        except Exception:
+            pass
+    return out
+
+
+def _parse_money(value: Any) -> int:
     """
-    Generate all 6-number combinations from a system ticket.
-    
-    Args:
-        numbers: List of numbers on the ticket (6-12 numbers)
-        system: System type (6, 7, 8, 9, 10, 11, or 12)
-    
-    Returns:
-        List of all possible 6-number combinations
+    Converts "$316,308" -> 316308, "-" -> 0, None -> 0.
     """
-    if system == 6:
-        return [sorted(numbers)]
-    
-    return [sorted(list(combo)) for combo in combinations(numbers, 6)]
+    if value is None:
+        return 0
+    s = str(value).strip()
+    if s == "-" or s == "":
+        return 0
+    return int(re.sub(r"[^\d]", "", s))
+
+
+def compute_total_payout(winning_details: List[Dict[str, Any]], prize_groups: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Sum payout per winning combination, based on draw_payload["prize_groups"]["groupX"].
+    Returns total + counts per group.
+    """
+    counts = Counter(d["prize_group"] for d in winning_details)
+    total = 0
+    for d in winning_details:
+        key = f"group{d['prize_group']}"
+        total += _parse_money(prize_groups.get(key))
+    return {
+        "total_payout": total,
+        "counts_by_group": dict(counts),
+    }
+
+
+def extract_toto_entries(ticket_details: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Supports both:
+      - new format: ticket_details["toto_entries"] = [ ... ]
+      - old format: ticket_details["toto_entry"] = { ... }
+    Returns list of entry dicts.
+    """
+    entries = ticket_details.get("toto_entries")
+    if isinstance(entries, list) and entries:
+        return entries
+
+    old = ticket_details.get("toto_entry")
+    if isinstance(old, dict) and old:
+        return [old]
+
+    return []
+
+
+# -------------------------
+# TOTO evaluation
+# -------------------------
+
+def generate_combinations(numbers: List[int]) -> List[List[int]]:
+    """
+    Generate all 6-number combinations from a TOTO entry.
+    - If exactly 6 numbers: 1 combination
+    - If >6 numbers: all nC6 combinations
+    """
+    nums = sorted(set(_to_int_list(numbers)))
+    if len(nums) < 6:
+        raise ValueError("Invalid TOTO entry: must have at least 6 unique numbers")
+
+    if len(nums) == 6:
+        return [nums]
+
+    return [list(combo) for combo in combinations(nums, 6)]
 
 
 def evaluate_toto_combination(
@@ -34,24 +102,17 @@ def evaluate_toto_combination(
 ) -> Optional[Dict[str, Any]]:
     """
     Evaluate a single 6-number combination against draw results.
-    
-    Args:
-        combination: 6 numbers from the ticket
-        winning_numbers: 6 winning numbers from the draw
-        additional_number: Additional number from the draw
-    
-    Returns:
-        Dictionary with evaluation details if it wins, None if no prize
     """
-    # Count main matches (intersection with winning numbers)
-    main_matches = len(set(combination) & set(winning_numbers))
-    
-    # Check if additional number is in the combination (but not in winning numbers)
-    has_additional = additional_number in combination and additional_number not in winning_numbers
-    
-    # Determine prize group
+    combo_set = set(combination)
+    win_set = set(winning_numbers)
+
+    main_matches = len(combo_set & win_set)
+
+    # In SG Pools TOTO, Additional is a separate number; treat it as "matched"
+    # if it appears in the combination.
+    has_additional = additional_number in combo_set
+
     prize_group = None
-    
     if main_matches == 6:
         prize_group = 1
     elif main_matches == 5 and has_additional:
@@ -66,109 +127,140 @@ def evaluate_toto_combination(
         prize_group = 6
     elif main_matches == 3:
         prize_group = 7
-    
-    # Return None if no prize (< 3 main matches)
+
     if prize_group is None:
         return None
-    
+
     return {
-        "combination": combination,
+        "combination": sorted(combination),
         "prize_group": prize_group,
         "main_matches": main_matches,
         "has_additional": has_additional
     }
 
 
-def evaluate_toto_ticket(
-    ticket_details: Dict[str, Any],
+def evaluate_toto_entry(
+    entry: Dict[str, Any],
     draw_payload: Dict[str, Any]
 ) -> Dict[str, Any]:
     """
-    Evaluate a TOTO ticket against a draw result.
-    
-    Args:
-        ticket_details: Ticket details JSON containing 'numbers' and 'system'
-        draw_payload: Draw payload JSON containing 'winning_numbers' and 'additional_number'
-    
-    Returns:
-        Dictionary with is_win, highest_prize_group, and details
+    Evaluate ONE TOTO entry (A/B/...) against the draw.
+    Returns per-entry evaluation details.
     """
-    ticket_numbers = ticket_details.get("numbers", [])
-    system = ticket_details.get("system", 6)
-    
-    winning_numbers = draw_payload.get("winning_numbers", [])
+    bet_type = entry.get("bet_type")
+    label = entry.get("label")
+
+    winning_numbers = _to_int_list(draw_payload.get("winning_numbers", []))
     additional_number = draw_payload.get("additional_number")
-    
-    # Validate inputs
-    if not ticket_numbers or len(ticket_numbers) < 6:
-        raise ValueError("Invalid ticket: must have at least 6 numbers")
-    
-    if not winning_numbers or len(winning_numbers) != 6:
+
+    if len(winning_numbers) != 6:
         raise ValueError("Invalid draw: must have exactly 6 winning numbers")
-    
     if additional_number is None:
         raise ValueError("Invalid draw: missing additional number")
-    
-    # Generate all combinations
-    all_combinations = generate_combinations(ticket_numbers, system)
-    
-    # Evaluate each combination
+
+    # Only supports Ordinary/System (numbers list) for now
+    numbers = _to_int_list(entry.get("numbers", []))
+
+    if bet_type == "SystemRoll":
+        # You can implement SystemRoll expansion later.
+        raise ValueError("SystemRoll checking not implemented yet")
+
+    # Ordinary/System both can be evaluated by combination expansion
+    combos = generate_combinations(numbers)
+
     winning_details = []
-    for combo in all_combinations:
-        result = evaluate_toto_combination(combo, winning_numbers, additional_number)
-        if result:
-            winning_details.append(result)
-    
-    # Determine overall result
+    for combo in combos:
+        r = evaluate_toto_combination(combo, winning_numbers, int(additional_number))
+        if r:
+            winning_details.append(r)
+
     if not winning_details:
         return {
+            "label": label,
+            "bet_type": bet_type,
+            "numbers": numbers,
             "is_win": False,
             "highest_prize_group": None,
             "details": []
         }
-    
-    # Find highest prize group (lowest number = highest prize)
-    highest_prize_group = min(detail["prize_group"] for detail in winning_details)
-    
+
+    highest_prize_group = min(d["prize_group"] for d in winning_details)
     return {
+        "label": label,
+        "bet_type": bet_type,
+        "numbers": numbers,
         "is_win": True,
         "highest_prize_group": highest_prize_group,
         "details": winning_details
     }
 
 
+def evaluate_toto_ticket_multi(
+    ticket_details: Dict[str, Any],
+    draw_payload: Dict[str, Any]
+) -> Dict[str, Any]:
+    """
+    Evaluate a ticket that may contain multiple TOTO entries.
+    Returns aggregated ticket-level result + per-entry results.
+    """
+    entries = extract_toto_entries(ticket_details)
+    if not entries:
+        raise ValueError("No TOTO entries found in ticket details")
+
+    per_entry_results = []
+    all_winning_details = []
+
+    for entry in entries:
+        res = evaluate_toto_entry(entry, draw_payload)
+        per_entry_results.append(res)
+        all_winning_details.extend(res["details"])
+
+    if not all_winning_details:
+        return {
+            "is_win": False,
+            "highest_prize_group": None,
+            "entries": per_entry_results,
+            "winning_details": [],
+            "payout": {"total_payout": 0, "counts_by_group": {}},
+        }
+
+    highest_prize_group = min(d["prize_group"] for d in all_winning_details)
+    payout = compute_total_payout(all_winning_details, draw_payload.get("prize_groups", {}))
+
+    return {
+        "is_win": True,
+        "highest_prize_group": highest_prize_group,
+        "entries": per_entry_results,
+        "winning_details": all_winning_details,
+        "payout": payout,
+    }
+
+
+# -------------------------
+# Draw processing
+# -------------------------
+
 def check_tickets_for_draw(draw_id: str) -> Dict[str, Any]:
     """
     Check all tickets for a specific draw and persist results.
-    This function is IDEMPOTENT - safe to run multiple times.
-    
-    Args:
-        draw_id: UUID of the draw in draw_results table
-    
-    Returns:
-        Summary of the checking operation
+    IDEMPOTENT - safe to run multiple times.
     """
     try:
-        # Fetch the draw result
         draw_response = supabase.table('draw_results').select('*').eq('uid', draw_id).single().execute()
-        
         if not draw_response.data:
             raise HTTPException(status_code=404, detail=f"Draw not found: {draw_id}")
-        
+
         draw = draw_response.data
         game_type = draw.get('game')
         draw_date = draw.get('draw_date')
         draw_payload = draw.get('result', {})
-        
-        # Only handle TOTO for now
+
         if game_type != 'toto':
             raise HTTPException(status_code=400, detail=f"Unsupported game type: {game_type}")
-        
-        # Fetch all tickets for this draw
+
         tickets_response = supabase.table('tickets').select('*').eq('game_type', 'TOTO').eq('draw_date', draw_date).execute()
-        
         tickets = tickets_response.data or []
-        
+
         if not tickets:
             return {
                 "draw_id": draw_id,
@@ -177,67 +269,58 @@ def check_tickets_for_draw(draw_id: str) -> Dict[str, Any]:
                 "losses": 0,
                 "message": "No tickets found for this draw"
             }
-        
-        # Process each ticket
+
         results = {
             "tickets_checked": 0,
             "wins": 0,
             "losses": 0,
             "errors": []
         }
-        
+
         for ticket in tickets:
             try:
                 ticket_id = ticket.get('id')
                 ticket_details = ticket.get('details', {})
-                
-                # Extract TOTO entry from ticket details
-                toto_entry = ticket_details.get('toto_entry', {})
-                
-                # Build simplified structure for evaluation
-                evaluation_details = {
-                    "numbers": toto_entry.get("numbers", []),
-                    "system": toto_entry.get("system_size", 6)
-                }
-                
-                # Evaluate the ticket
-                evaluation = evaluate_toto_ticket(evaluation_details, draw_payload)
-                
-                # Prepare ticket_check record
+
+                evaluation = evaluate_toto_ticket_multi(ticket_details, draw_payload)
+
+                # Keep DB fields the same; store richer info inside details JSON.
                 ticket_check = {
                     "ticket_id": ticket_id,
                     "draw_id": draw_id,
                     "is_win": evaluation["is_win"],
                     "highest_prize_group": evaluation["highest_prize_group"],
-                    "details": evaluation["details"]
+                    "details": {
+                        "entries": evaluation["entries"],                 # per A/B entry
+                        "winning_details": evaluation["winning_details"], # flattened combos
+                        "payout": evaluation["payout"],                   # total + group counts
+                    }
                 }
-                
-                # UPSERT to handle idempotency
-                # Use upsert to avoid duplicates (unique constraint on ticket_id, draw_id)
-                check_response = supabase.table('ticket_checks').upsert(
+
+                supabase.table('ticket_checks').upsert(
                     ticket_check,
                     on_conflict="ticket_id,draw_id"
                 ).execute()
-                
+
                 results["tickets_checked"] += 1
                 if evaluation["is_win"]:
                     results["wins"] += 1
                 else:
                     results["losses"] += 1
-                    
+
             except Exception as e:
                 results["errors"].append({
                     "ticket_id": ticket.get('id'),
                     "error": str(e)
                 })
-        
+
         return {
             "draw_id": draw_id,
             "game_type": game_type,
             "draw_date": draw_date,
             **results
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -247,20 +330,12 @@ def check_tickets_for_draw(draw_id: str) -> Dict[str, Any]:
 def check_all_unprocessed_draws() -> Dict[str, Any]:
     """
     Check all draws that have tickets but no ticket_checks yet.
-    This is the main entry point for the scheduled job.
-    
-    Returns:
-        Summary of all draws processed
+    One row per ticket per draw.
     """
     try:
-        # Find all draws that need processing
-        # Strategy: Find draws that have associated tickets but no ticket_checks
-        
-        # Get all draw IDs
         draws_response = supabase.table('draw_results').select('uid, game, draw_date').eq('game', 'toto').execute()
-        
         draws = draws_response.data or []
-        
+
         results = {
             "draws_processed": 0,
             "total_tickets_checked": 0,
@@ -268,21 +343,16 @@ def check_all_unprocessed_draws() -> Dict[str, Any]:
             "total_losses": 0,
             "draw_summaries": []
         }
-        
+
         for draw in draws:
             draw_id = draw.get('uid')
-            draw_date = draw.get('draw_date')
-            
-            # Check if this draw already has ticket_checks
+
             existing_checks = supabase.table('ticket_checks').select('id', count='exact').eq('draw_id', draw_id).execute()
-            
-            # Get count of tickets for this draw
             tickets_count = supabase.table('tickets').select('id', count='exact').eq('game_type', 'TOTO').eq('draw_date', draw.get('draw_date')).execute()
-            
+
             tickets_total = tickets_count.count or 0
             checks_total = existing_checks.count or 0
-            
-            # Only process if there are tickets and not all have been checked
+
             if tickets_total > 0 and checks_total < tickets_total:
                 try:
                     draw_result = check_tickets_for_draw(draw_id)
@@ -296,8 +366,8 @@ def check_all_unprocessed_draws() -> Dict[str, Any]:
                         "draw_id": draw_id,
                         "error": str(e)
                     })
-        
+
         return results
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Batch processing failed: {str(e)}")
