@@ -50,7 +50,7 @@ async def upload_ticket(file: UploadFile = File(...), user_id: UUID = Depends(au
     except ValidationError as e:
         # Gemini output didn't match schema/constraints
         print("Validation error:", e.errors())
-        raise HTTPException(status_code=422, detail=e.errors())
+        raise HTTPException(status_code=422, detail=e.errors(include_context=False))
     except ValueError as e:
         # Your OCR function raised ValueError (e.g., JSON parse failure)
         raise HTTPException(status_code=422, detail=f"OCR processing error: {str(e)}")
