@@ -30,51 +30,51 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
   };
 
   return (
-    <div className="bg-slate-800 rounded-2xl shadow-xl p-8 space-y-6 border border-slate-700">
+    <div className="bg-white/5 rounded-2xl shadow-xl p-8 space-y-6 border border-white/20">
       <h1 className="text-3xl font-bold text-white mb-2 text-center">Verify Ticket Details</h1>
       <p className="text-white/90 text-center">Please confirm the extracted information</p>
       
       {/* Game Type */}
       <div>
-        <label className="block text-sm font-medium text-slate-400 mb-2">Game Type</label>
-        <div className="px-4 py-3 bg-slate-700 rounded-lg border border-slate-600">
-          <span className="text-lg font-semibold text-slate-200">{game_type || 'Not detected'}</span>
+        <label className="block text-sm font-medium text-white/70 mb-2">Game Type</label>
+        <div className="px-4 py-3 bg-white/10 rounded-lg border border-white/15">
+          <span className="text-lg font-semibold text-white">{game_type || 'Not detected'}</span>
         </div>
       </div>
 
       {/* Bet Type - only show for 4D or if all TOTO entries have the same type */}
       {game_type === '4D' && (
         <div>
-          <label className="block text-sm font-medium text-slate-400 mb-2">Bet Type</label>
-          <div className="px-4 py-3 bg-slate-700 rounded-lg border border-slate-600">
-            <span className="text-lg font-semibold text-slate-200 capitalize">{bet_type}</span>
+          <label className="block text-sm font-medium text-white/70 mb-2">Bet Type</label>
+          <div className="px-4 py-3 bg-white/10 rounded-lg border border-white/15">
+            <span className="text-lg font-semibold text-white capitalize">{bet_type}</span>
           </div>
         </div>
       )}
 
       {/* Numbers */}
       <div>
-        <label className="block text-sm font-medium text-slate-400 mb-2">
+        <label className="block text-sm font-medium text-white/70 mb-2">
           {game_type === '4D' ? '4D Entries' : 'TOTO Entries'}
         </label>
-        <div className="px-4 py-3 bg-slate-700 rounded-lg border border-slate-600">
+        <div className="px-4 py-3 bg-white/10 rounded-lg border border-white/15">
           {game_type === '4D' && fourd_bets && fourd_bets.length > 0 ? (
             <div className="space-y-4">
               {fourd_bets.map((bet, index) => (
-                <div key={index} className="p-4 bg-slate-800 rounded-lg border border-slate-600">
+                <div key={index} className="p-4 bg-black rounded-lg border border-white/15">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <span className="text-slate-400 font-medium">{String.fromCharCode(65 + index)}.</span>
-                      <span className="inline-flex items-center justify-center px-4 py-2 bg-fuchsia-500/20 text-fuchsia-300 font-bold text-2xl rounded-lg">
+                      <span className="text-white/60 font-medium">{String.fromCharCode(65 + index)}.</span>
+                      <span className="inline-flex items-center justify-center px-4 py-2 bg-white/20 text-white font-bold text-2xl rounded-lg">
                         {bet.number || bet.roll_pattern || 'N/A'}
                       </span>
                     </div>
                     <div className="text-right">
                       {bet.entry_type && (
-                        <div className="text-xs text-slate-500 mb-1 uppercase">{bet.entry_type}</div>
+                        <div className="text-xs text-white/60 mb-1 uppercase">{bet.entry_type}</div>
                       )}
                       {bet.permutations && (
-                        <div className="text-sm text-slate-400">
+                        <div className="text-sm text-white/70">
                           {bet.permutations} {bet.permutations === 1 ? 'Permutation' : 'Permutations'}
                         </div>
                       )}
@@ -82,12 +82,12 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
                   </div>
                   <div className="flex gap-4 mt-3 ml-8">
                     <div className="flex items-center gap-2">
-                      <span className="text-slate-300 font-semibold">BIG</span>
-                      <span className="text-slate-400">${bet.big_amount?.toFixed(2) || '0.00'}</span>
+                      <span className="text-white/90 font-semibold">BIG</span>
+                      <span className="text-white/70">${bet.big_amount?.toFixed(2) || '0.00'}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-slate-300 font-semibold">SML</span>
-                      <span className="text-slate-400">${bet.small_amount?.toFixed(2) || '0.00'}</span>
+                      <span className="text-white/90 font-semibold">SML</span>
+                      <span className="text-white/70">${bet.small_amount?.toFixed(2) || '0.00'}</span>
                     </div>
                   </div>
                 </div>
@@ -96,14 +96,14 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
           ) : game_type === 'TOTO' && toto_entries && toto_entries.length > 0 ? (
             <div className="space-y-4">
               {toto_entries.map((entry, index) => (
-                <div key={index} className="p-4 bg-slate-800 rounded-lg border border-slate-600">
+                <div key={index} className="p-4 bg-black rounded-lg border border-white/15">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <span className="text-slate-400 font-medium">{entry.label || String.fromCharCode(65 + index)}.</span>
+                      <span className="text-white/60 font-medium">{entry.label || String.fromCharCode(65 + index)}.</span>
                       <div>
-                        <span className="text-xs text-slate-500 uppercase">{entry.bet_type}</span>
+                        <span className="text-xs text-white/60 uppercase">{entry.bet_type}</span>
                         {entry.bet_type === 'System' && entry.system_size && (
-                          <span className="ml-2 text-xs text-slate-400">(System {entry.system_size})</span>
+                          <span className="ml-2 text-xs text-white/70">(System {entry.system_size})</span>
                         )}
                       </div>
                     </div>
@@ -112,26 +112,26 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
                     {entry.numbers && entry.numbers.map((num, numIndex) => (
                       <span 
                         key={numIndex}
-                        className="inline-flex items-center justify-center w-12 h-12 bg-fuchsia-500/20 text-fuchsia-300 font-bold text-lg rounded-lg"
+                        className="inline-flex items-center justify-center w-12 h-12 bg-white/20 text-white font-bold text-lg rounded-lg"
                       >
                         {num}
                       </span>
                     ))}
                   </div>
                   {entry.bet_type === 'SystemRoll' && entry.system_roll && (
-                    <div className="mt-4 ml-8 p-3 bg-slate-900 rounded-lg border border-slate-700">
-                      <div className="text-sm text-slate-400 mb-2">System Roll</div>
+                    <div className="mt-4 ml-8 p-3 bg-black rounded-lg border border-white/20">
+                      <div className="text-sm text-white/70 mb-2">System Roll</div>
                       <div className="flex items-center gap-2">
-                        <span className="text-slate-300">Fixed Numbers:</span>
+                        <span className="text-white/90">Fixed Numbers:</span>
                         <div className="flex gap-1">
                           {entry.system_roll.fixed_numbers.map((num, i) => (
-                            <span key={i} className="inline-flex items-center justify-center w-8 h-8 bg-slate-700 text-slate-300 font-semibold text-xs rounded">
+                            <span key={i} className="inline-flex items-center justify-center w-8 h-8 bg-white/10 text-white/90 font-semibold text-xs rounded">
                               {num}
                             </span>
                           ))}
                         </div>
                       </div>
-                      <div className="mt-2 text-sm text-slate-400">
+                      <div className="mt-2 text-sm text-white/70">
                         Roll Range: {entry.system_roll.roll_from} - {entry.system_roll.roll_to}
                       </div>
                     </div>
@@ -140,16 +140,16 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
               ))}
             </div>
           ) : (
-            <div className="text-slate-400 text-center py-4">No entries found</div>
+            <div className="text-white/70 text-center py-4">No entries found</div>
           )}
         </div>
       </div>
 
       {/* Draw Date */}
       <div>
-        <label className="block text-sm font-medium text-slate-400 mb-2">Draw Date</label>
-        <div className="px-4 py-3 bg-slate-700 rounded-lg border border-slate-600">
-          <span className="text-lg font-semibold text-slate-200">
+        <label className="block text-sm font-medium text-white/70 mb-2">Draw Date</label>
+        <div className="px-4 py-3 bg-white/10 rounded-lg border border-white/15">
+          <span className="text-lg font-semibold text-white">
             {new Date(draw_date).toLocaleDateString('en-SG', { 
               weekday: 'long',
               year: 'numeric',
@@ -163,9 +163,9 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
       {/* Ticket Price */}
       {ticket_price && (
         <div>
-          <label className="block text-sm font-medium text-slate-400 mb-2">Ticket Price</label>
-          <div className="px-4 py-3 bg-slate-700 rounded-lg border border-slate-600">
-            <span className="text-lg font-semibold text-slate-200">
+          <label className="block text-sm font-medium text-white/70 mb-2">Ticket Price</label>
+          <div className="px-4 py-3 bg-white/10 rounded-lg border border-white/15">
+            <span className="text-lg font-semibold text-white">
               ${ticket_price.toFixed(2)}
             </span>
           </div>
@@ -177,14 +177,14 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
         <button
           type="button"
           onClick={handleEdit}
-          className="flex-1 bg-slate-700 text-slate-200 py-3 rounded-lg font-medium hover:bg-slate-600 transition-colors"
+          className="flex-1 bg-white/5 text-white py-3 rounded-lg font-medium hover:bg-white/10 transition-colors border border-white/20"
         >
           Edit Details
         </button>
         <button
           type="button"
           onClick={handleConfirm}
-          className="flex-1 bg-fuchsia-600 text-white py-3 rounded-lg font-medium hover:bg-fuchsia-700 transition-colors"
+          className="flex-1 bg-white text-black py-3 rounded-lg font-medium hover:bg-white/90 transition-colors"
         >
           Confirm & Save
         </button>

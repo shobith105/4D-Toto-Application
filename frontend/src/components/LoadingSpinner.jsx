@@ -2,8 +2,8 @@ import React from 'react';
 
 export default function LoadingSpinner({ message = "Processing..." }) {
   return (
-    <div className="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="bg-slate-800 rounded-2xl shadow-2xl p-8 border border-slate-700 max-w-sm mx-4">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="bg-white/5 rounded-2xl shadow-2xl p-8 border border-white/20 max-w-sm mx-4">
         <div className="flex flex-col items-center space-y-6">
           {/* Animated Ticket Icon */}
           <div className="relative">
@@ -22,8 +22,8 @@ export default function LoadingSpinner({ message = "Processing..." }) {
                 />
                 <defs>
                   <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#d946ef" />
-                    <stop offset="100%" stopColor="#ec4899" />
+                    <stop offset="0%" stopColor="#ffffff" />
+                    <stop offset="100%" stopColor="#aaaaaa" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -36,7 +36,7 @@ export default function LoadingSpinner({ message = "Processing..." }) {
                   cx="50"
                   cy="50"
                   r="35"
-                  stroke="#a855f7"
+                  stroke="#ffffff"
                   strokeWidth="2"
                   fill="none"
                   opacity="0.4"
@@ -47,7 +47,7 @@ export default function LoadingSpinner({ message = "Processing..." }) {
             {/* Center ticket icon */}
             <div className="relative w-24 h-24 flex items-center justify-center">
               <svg 
-                className="w-12 h-12 text-fuchsia-400 animate-bounce-slow" 
+                className="w-12 h-12 text-white animate-bounce-slow" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -66,15 +66,15 @@ export default function LoadingSpinner({ message = "Processing..." }) {
           <div className="text-center">
             <h3 className="text-xl font-semibold text-white mb-2">{message}</h3>
             <div className="flex items-center justify-center space-x-1">
-              <div className="w-2 h-2 bg-fuchsia-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-              <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-              <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+              <div className="w-2 h-2 bg-white/70 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+              <div className="w-2 h-2 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
             </div>
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-fuchsia-500 via-pink-500 to-purple-500 animate-loading-bar"></div>
+          <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-white via-white/70 to-white/50 animate-loading-bar"></div>
           </div>
         </div>
       </div>

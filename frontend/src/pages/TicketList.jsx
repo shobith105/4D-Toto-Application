@@ -93,10 +93,10 @@ export default function TicketList() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 text-slate-200 flex items-center justify-center">
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-fuchsia-500 border-r-transparent mb-4"></div>
-          <p className="text-slate-400">Loading tickets...</p>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-white border-r-transparent mb-4"></div>
+          <p className="text-white/70">Loading tickets...</p>
         </div>
       </div>
     );
@@ -104,12 +104,12 @@ export default function TicketList() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-900 text-slate-200 flex items-center justify-center">
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-400 mb-4">Error loading tickets: {error}</p>
+          <p className="text-red-500 font-bold mb-4">Error loading tickets: {error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700"
+            className="px-4 py-2 bg-white text-black rounded-lg hover:bg-white/90"
           >
             Retry
           </button>
@@ -125,19 +125,19 @@ export default function TicketList() {
       case 'win':
         return <span className="px-3 py-1 bg-green-500/10 text-green-400 text-xs font-semibold rounded-full">Won!</span>;
       case 'loss':
-        return <span className="px-3 py-1 bg-slate-700 text-slate-400 text-xs font-semibold rounded-full">No Win</span>;
+        return <span className="px-3 py-1 bg-white/5 text-white/70 text-xs font-semibold rounded-full">No Win</span>;
       default:
         return null;
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 p-6">
+    <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-fuchsia-500/20 backdrop-blur mb-4">
-            <span className="text-2xl font-bold text-fuchsia-500">M</span>
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 backdrop-blur mb-4">
+            <span className="text-2xl font-bold text-white">M</span>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">My Tickets</h1>
           <p className="text-white/90">View all your submitted tickets</p>
@@ -145,21 +145,21 @@ export default function TicketList() {
 
         {/* Stats Summary */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 text-center">
+          <div className="bg-white/5 border border-white/20 rounded-lg p-4 text-center">
             <div className="text-2xl font-bold text-white">{tickets.length}</div>
-            <div className="text-sm text-slate-400">Total Tickets</div>
+            <div className="text-sm text-white/70">Total Tickets</div>
           </div>
-          <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 text-center">
+          <div className="bg-white/5 border border-white/20 rounded-lg p-4 text-center">
             <div className="text-2xl font-bold text-white">
               {tickets.filter(t => t.win_status === 'pending').length}
             </div>
-            <div className="text-sm text-slate-400">Pending</div>
+            <div className="text-sm text-white/70">Pending</div>
           </div>
-          <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 text-center">
+          <div className="bg-white/5 border border-white/20 rounded-lg p-4 text-center">
             <div className="text-2xl font-bold text-white">
               {tickets.filter(t => t.win_status === 'win').length}
             </div>
-            <div className="text-sm text-slate-400">Wins</div>
+            <div className="text-sm text-white/70">Wins</div>
           </div>
         </div>
 
@@ -181,7 +181,7 @@ export default function TicketList() {
             {tickets.map((ticket) => (
               <div 
                 key={ticket.uuid} 
-                className="bg-slate-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer border border-slate-700 hover:border-fuchsia-500"
+                className="bg-white/5 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer border border-white/20 hover:border-white"
                 onClick={() => setSelectedTicket(ticket)}
               >
                 <div className="flex items-start justify-between mb-4">
@@ -192,10 +192,10 @@ export default function TicketList() {
                       {ticket.game_type}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-200">
+                      <h3 className="font-semibold text-white">
                         {ticket.game_type} - {ticket.bet_type === 'system' ? `System ${ticket.system_size}` : 'Standard'}
                       </h3>
-                      <p className="text-sm text-slate-400">
+                      <p className="text-sm text-white/70">
                         Draw: {new Date(ticket.draw_date).toLocaleDateString('en-SG', { 
                           month: 'short', 
                           day: 'numeric',
@@ -219,7 +219,7 @@ export default function TicketList() {
                   {ticket.raw_numbers.map((num, index) => (
                     <span 
                       key={index}
-                      className="inline-flex items-center justify-center min-w-[3rem] px-3 py-2 bg-fuchsia-500/20 text-fuchsia-300 font-bold rounded-lg"
+                      className="inline-flex items-center justify-center min-w-[3rem] px-3 py-2 bg-white/10 text-white font-bold rounded-lg"
                     >
                       {num}
                     </span>
@@ -228,8 +228,8 @@ export default function TicketList() {
 
                 {/* System Bet Info */}
                 {ticket.bet_type === 'system' && ticket.expanded_combos && (
-                  <div className="mt-3 pt-3 border-t border-slate-700">
-                    <p className="text-xs text-slate-500">
+                  <div className="mt-3 pt-3 border-t border-white/20">
+                    <p className="text-xs text-white/70">
                       {ticket.expanded_combos.length} combinations • ${ticket.ticket_price.toFixed(2)}
                     </p>
                   </div>
@@ -241,9 +241,9 @@ export default function TicketList() {
 
         {/* Empty State */}
         {tickets.length === 0 && (
-          <div className="bg-slate-800 rounded-xl shadow-lg p-12 text-center border border-slate-700">
+          <div className="bg-white/5 rounded-xl shadow-lg p-12 text-center border border-white/20">
             <svg 
-              className="w-16 h-16 mx-auto mb-4 text-slate-600" 
+              className="w-16 h-16 mx-auto mb-4 text-white/20" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -255,11 +255,11 @@ export default function TicketList() {
                 d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" 
               />
             </svg>
-            <h3 className="text-lg font-semibold text-slate-200 mb-2">No tickets yet</h3>
-            <p className="text-slate-400 mb-6">Upload your first ticket to get started</p>
+            <h3 className="text-lg font-semibold text-white mb-2">No tickets yet</h3>
+            <p className="text-white/70 mb-6">Upload your first ticket to get started</p>
             <button
               onClick={() => navigate('/home')}
-              className="px-6 py-3 bg-fuchsia-600 text-white rounded-lg font-medium hover:bg-fuchsia-700 transition-colors"
+              className="px-6 py-3 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors"
             >
               Upload Ticket
             </button>
@@ -270,13 +270,13 @@ export default function TicketList() {
         <div className="flex gap-4 mt-8">
           <button
             onClick={() => navigate('/home')}
-            className="flex-1 bg-fuchsia-600 text-white py-3 rounded-lg font-medium hover:bg-fuchsia-700 transition-colors"
+            className="flex-1 bg-white text-black py-3 rounded-lg font-medium hover:bg-white/90 transition-colors"
           >
             + Upload New Ticket
           </button>
           <button
             onClick={() => console.log('Check all tickets')}
-            className="flex-1 bg-slate-700 text-slate-200 py-3 rounded-lg font-medium hover:bg-slate-600 transition-colors"
+            className="flex-1 bg-white/5 text-white py-3 rounded-lg font-medium hover:bg-white/10 transition-colors"
           >
             Check All Results
           </button>
@@ -286,7 +286,7 @@ export default function TicketList() {
         <div className="text-center mt-6">
           <button
             onClick={() => navigate('/dashboard')}
-            className="text-slate-400 hover:text-fuchsia-500 font-medium transition-colors"
+            className="text-white/70 hover:text-white font-medium transition-colors"
           >
             ← Back to Dashboard
           </button>

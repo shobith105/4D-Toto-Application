@@ -72,12 +72,14 @@ export default function Verify() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 p-6">
+    <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-fuchsia-500/20 backdrop-blur mb-4">
-            <span className="text-2xl font-bold text-fuchsia-500">M</span>
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur mb-4">
+            <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+            </svg>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Verify Ticket</h1>
           <p className="text-white/90">Confirm the extracted details before saving</p>
@@ -94,7 +96,7 @@ export default function Verify() {
         <div className="text-center mt-6">
           <button
             onClick={() => navigate('/home')}
-            className="text-slate-400 hover:text-fuchsia-500 font-medium transition-colors"
+            className="text-white/70 hover:text-white font-medium transition-colors"
           >
             ← Back to Upload
           </button>

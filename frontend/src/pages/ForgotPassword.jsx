@@ -29,21 +29,23 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-600 via-rose-500 to-orange-400 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 backdrop-blur mb-4">
-            <span className="text-2xl font-bold text-white">M</span>
+            <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+            </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white">Merlion Metrics</h1>
+          <h1 className="text-2xl font-bold text-white">TicketSense</h1>
           <p className="text-sm text-white/90 mt-1">4D & TOTO Dashboard</p>
         </div>
 
         {/* Forgot Password Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <h2 className="text-xl text-center font-semibold text-slate-900 mb-2">Forgot Password</h2>
-          <p className="text-sm text-slate-600 text-center mb-6">
+        <div className="bg-white/5 backdrop-blur border border-white/20 rounded-2xl shadow-lg p-8">
+          <h2 className="text-xl text-center font-semibold text-white mb-2">Forgot Password</h2>
+          <p className="text-sm text-white/60 text-center mb-6">
             Enter your email address and we&apos;ll send you a link to reset your password.
           </p>
 
@@ -55,7 +57,7 @@ export default function ForgotPassword() {
 
           <form onSubmit={handleResetPassword} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                 Email
               </label>
               <input
@@ -65,25 +67,25 @@ export default function ForgotPassword() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 rounded-lg border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-red-600 text-white py-3 rounded-lg font-medium hover:bg-red-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              className="w-full bg-red-600 text-white py-3 rounded-lg font-medium hover:bg-red-700 disabled:bg-white/5 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             >
               {loading ? 'Sending...' : 'Send Reset Link'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-white/60">
               Remember your password?{' '}
               <button
                 onClick={() => navigate('/')}
-                className="font-semibold text-red-600 hover:text-red-700"
+                className="font-semibold text-red-500 hover:text-red-400"
                 type="button"
               >
                 Sign in

@@ -90,18 +90,18 @@ const Notifications = () => {
   const unreadCount = notifications.filter(notif => !notif.is_read).length;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200">
+    <div className="min-h-screen bg-black text-white">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-4xl font-bold text-slate-100 mb-2">Notifications</h1>
-              <p className="text-slate-400">
+              <h1 className="text-4xl font-bold text-white mb-2">Notifications</h1>
+              <p className="text-white/70">
                 {unreadCount > 0 ? (
                   <span>
-                    You have <span className="text-fuchsia-500 font-semibold">{unreadCount}</span> unread notification{unreadCount !== 1 && 's'}
+                    You have <span className="text-white font-bold">{unreadCount}</span> unread notification{unreadCount !== 1 && 's'}
                   </span>
                 ) : (
                   <span>You're all caught up!</span>
@@ -118,7 +118,7 @@ const Notifications = () => {
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
-                  className="px-6 py-3 bg-fuchsia-500 hover:bg-fuchsia-600 text-white rounded-lg transition-colors font-semibold"
+                  className="px-6 py-3 bg-white hover:bg-white/90 text-black rounded-lg transition-colors font-semibold"
                 >
                   Mark All as Read
                 </button>
@@ -127,13 +127,13 @@ const Notifications = () => {
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex gap-2 border-b border-slate-700">
+          <div className="flex gap-2 border-b border-white/20">
             <button
               onClick={() => setFilter('all')}
               className={`px-6 py-3 font-semibold transition-colors ${
                 filter === 'all'
-                  ? 'text-fuchsia-500 border-b-2 border-fuchsia-500'
-                  : 'text-slate-400 hover:text-slate-300'
+                  ? 'text-white border-b-2 border-white'
+                  : 'text-white/70 hover:text-white'
               }`}
             >
               All ({notifications.length})
@@ -142,8 +142,8 @@ const Notifications = () => {
               onClick={() => setFilter('unread')}
               className={`px-6 py-3 font-semibold transition-colors ${
                 filter === 'unread'
-                  ? 'text-fuchsia-500 border-b-2 border-fuchsia-500'
-                  : 'text-slate-400 hover:text-slate-300'
+                  ? 'text-white border-b-2 border-white'
+                  : 'text-white/70 hover:text-white'
               }`}
             >
               Unread ({unreadCount})
@@ -152,8 +152,8 @@ const Notifications = () => {
               onClick={() => setFilter('read')}
               className={`px-6 py-3 font-semibold transition-colors ${
                 filter === 'read'
-                  ? 'text-fuchsia-500 border-b-2 border-fuchsia-500'
-                  : 'text-slate-400 hover:text-slate-300'
+                  ? 'text-white border-b-2 border-white'
+                  : 'text-white/70 hover:text-white'
               }`}
             >
               Read ({notifications.length - unreadCount})
@@ -168,7 +168,7 @@ const Notifications = () => {
           <div className="text-center py-20">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-24 w-24 mx-auto mb-4 text-slate-700"
+              className="h-24 w-24 mx-auto mb-4 text-white/20"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -180,8 +180,8 @@ const Notifications = () => {
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
             </svg>
-            <h3 className="text-2xl font-bold text-slate-400 mb-2">No notifications</h3>
-            <p className="text-slate-500">
+            <h3 className="text-2xl font-bold text-white/70 mb-2">No notifications</h3>
+            <p className="text-white/70">
               {filter === 'unread'
                 ? "You don't have any unread notifications"
                 : filter === 'read'
