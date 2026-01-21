@@ -136,10 +136,12 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
                 )}
               </div>
 
-              {/* Ticket Numbers - TOTO format with entries */}
+              {/* Ticket Numbers - Display for both wins and losses */}
               {parsedData.ticket_numbers && Array.isArray(parsedData.ticket_numbers) && parsedData.ticket_numbers.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-slate-700">
-                  <div className="text-slate-400 text-sm mb-3 font-semibold">Your Ticket Numbers:</div>
+                  <div className="text-slate-400 text-sm mb-3 font-semibold">
+                    {type === 'loss' ? 'Your Numbers:' : 'Your Ticket Numbers:'}
+                  </div>
                   <div className="space-y-3">
                     {parsedData.game_type === 'TOTO' ? (
                       // TOTO format
@@ -152,7 +154,11 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
                             {entry.numbers && entry.numbers.map((num, numIdx) => (
                               <span
                                 key={numIdx}
-                                className="inline-flex items-center justify-center w-8 h-8 bg-slate-800 text-slate-200 font-semibold text-sm rounded border border-slate-600"
+                                className={`inline-flex items-center justify-center w-8 h-8 font-semibold text-sm rounded border ${
+                                  type === 'loss' 
+                                    ? 'bg-slate-800/70 text-slate-400 border-slate-600' 
+                                    : 'bg-slate-800 text-slate-200 border-slate-600'
+                                }`}
                               >
                                 {num}
                               </span>
@@ -169,9 +175,15 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
                           const betType = typeof bet === 'object' ? (bet.bet_type || bet.entry_type || 'Ordinary') : 'Ordinary';
                           
                           return (
-                            <div key={idx} className="bg-slate-800/50 rounded-lg px-3 py-2 border border-slate-600">
+                            <div key={idx} className={`rounded-lg px-3 py-2 border ${
+                              type === 'loss'
+                                ? 'bg-slate-800/70 border-slate-600'
+                                : 'bg-slate-800/50 border-slate-600'
+                            }`}>
                               <div className="text-xs text-slate-500 mb-1">{betType}</div>
-                              <div className="text-lg font-bold text-slate-200 tracking-wider">{betNumber}</div>
+                              <div className={`text-lg font-bold tracking-wider ${
+                                type === 'loss' ? 'text-slate-400' : 'text-slate-200'
+                              }`}>{betNumber}</div>
                             </div>
                           );
                         })}
@@ -181,10 +193,12 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
                 </div>
               )}
 
-              {/* Draw Winning Numbers */}
+              {/* Draw Winning Numbers - Display for both wins and losses */}
               {parsedData.draw_winning_numbers && (
                 <div className="mt-4 pt-4 border-t border-slate-700">
-                  <div className="text-slate-400 text-sm mb-3 font-semibold">Draw Winning Numbers:</div>
+                  <div className="text-slate-400 text-sm mb-3 font-semibold">
+                    {type === 'loss' ? 'Winning Numbers (This Draw):' : 'Draw Winning Numbers:'}
+                  </div>
                   
                   {parsedData.game_type === 'TOTO' && (
                     <div className="space-y-3">
@@ -195,7 +209,11 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
                             parsedData.draw_winning_numbers.winning_numbers.map((num, idx) => (
                               <span
                                 key={idx}
-                                className="inline-flex items-center justify-center w-10 h-10 bg-blue-500/20 text-blue-300 font-bold text-base rounded-full border-2 border-blue-500/50"
+                                className={`inline-flex items-center justify-center w-10 h-10 font-bold text-base rounded-full border-2 ${
+                                  type === 'loss'
+                                    ? 'bg-blue-500/10 text-blue-400/70 border-blue-500/30'
+                                    : 'bg-blue-500/20 text-blue-300 border-blue-500/50'
+                                }`}
                               >
                                 {num}
                               </span>
@@ -206,7 +224,11 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
                       {parsedData.draw_winning_numbers.additional_number && (
                         <div>
                           <div className="text-xs text-slate-500 mb-2">Additional Number</div>
-                          <span className="inline-flex items-center justify-center w-10 h-10 bg-amber-500/20 text-amber-300 font-bold text-base rounded-full border-2 border-amber-500/50">
+                          <span className={`inline-flex items-center justify-center w-10 h-10 font-bold text-base rounded-full border-2 ${
+                            type === 'loss'
+                              ? 'bg-amber-500/10 text-amber-400/70 border-amber-500/30'
+                              : 'bg-amber-500/20 text-amber-300 border-amber-500/50'
+                          }`}>
                             {parsedData.draw_winning_numbers.additional_number}
                           </span>
                         </div>
@@ -218,21 +240,45 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
                     <div className="space-y-3">
                       <div className="grid grid-cols-3 gap-3">
                         {parsedData.draw_winning_numbers.first && (
-                          <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-lg p-3 border border-yellow-500/50">
-                            <div className="text-xs text-yellow-300 mb-1 font-semibold">1st Prize</div>
-                            <div className="text-2xl font-bold text-yellow-200 tracking-wider">{parsedData.draw_winning_numbers.first}</div>
+                          <div className={`rounded-lg p-3 border ${
+                            type === 'loss'
+                              ? 'bg-gradient-to-br from-yellow-500/10 to-yellow-600/10 border-yellow-500/30'
+                              : 'bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 border-yellow-500/50'
+                          }`}>
+                            <div className={`text-xs mb-1 font-semibold ${
+                              type === 'loss' ? 'text-yellow-300/70' : 'text-yellow-300'
+                            }`}>1st Prize</div>
+                            <div className={`text-2xl font-bold tracking-wider ${
+                              type === 'loss' ? 'text-yellow-200/70' : 'text-yellow-200'
+                            }`}>{parsedData.draw_winning_numbers.first}</div>
                           </div>
                         )}
                         {parsedData.draw_winning_numbers.second && (
-                          <div className="bg-gradient-to-br from-slate-400/20 to-slate-500/20 rounded-lg p-3 border border-slate-400/50">
-                            <div className="text-xs text-slate-300 mb-1 font-semibold">2nd Prize</div>
-                            <div className="text-2xl font-bold text-slate-200 tracking-wider">{parsedData.draw_winning_numbers.second}</div>
+                          <div className={`rounded-lg p-3 border ${
+                            type === 'loss'
+                              ? 'bg-gradient-to-br from-slate-400/10 to-slate-500/10 border-slate-400/30'
+                              : 'bg-gradient-to-br from-slate-400/20 to-slate-500/20 border-slate-400/50'
+                          }`}>
+                            <div className={`text-xs mb-1 font-semibold ${
+                              type === 'loss' ? 'text-slate-300/70' : 'text-slate-300'
+                            }`}>2nd Prize</div>
+                            <div className={`text-2xl font-bold tracking-wider ${
+                              type === 'loss' ? 'text-slate-200/70' : 'text-slate-200'
+                            }`}>{parsedData.draw_winning_numbers.second}</div>
                           </div>
                         )}
                         {parsedData.draw_winning_numbers.third && (
-                          <div className="bg-gradient-to-br from-orange-600/20 to-orange-700/20 rounded-lg p-3 border border-orange-600/50">
-                            <div className="text-xs text-orange-300 mb-1 font-semibold">3rd Prize</div>
-                            <div className="text-2xl font-bold text-orange-200 tracking-wider">{parsedData.draw_winning_numbers.third}</div>
+                          <div className={`rounded-lg p-3 border ${
+                            type === 'loss'
+                              ? 'bg-gradient-to-br from-orange-600/10 to-orange-700/10 border-orange-600/30'
+                              : 'bg-gradient-to-br from-orange-600/20 to-orange-700/20 border-orange-600/50'
+                          }`}>
+                            <div className={`text-xs mb-1 font-semibold ${
+                              type === 'loss' ? 'text-orange-300/70' : 'text-orange-300'
+                            }`}>3rd Prize</div>
+                            <div className={`text-2xl font-bold tracking-wider ${
+                              type === 'loss' ? 'text-orange-200/70' : 'text-orange-200'
+                            }`}>{parsedData.draw_winning_numbers.third}</div>
                           </div>
                         )}
                       </div>
@@ -242,7 +288,11 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
                           <div className="text-xs text-slate-500 mb-2">Starter Prizes</div>
                           <div className="flex flex-wrap gap-2">
                             {parsedData.draw_winning_numbers.starter.map((num, idx) => (
-                              <span key={idx} className="inline-flex items-center justify-center px-2 py-1 bg-slate-800/50 text-slate-300 font-mono text-sm rounded border border-slate-600">
+                              <span key={idx} className={`inline-flex items-center justify-center px-2 py-1 font-mono text-sm rounded border ${
+                                type === 'loss'
+                                  ? 'bg-slate-800/30 text-slate-400 border-slate-600/50'
+                                  : 'bg-slate-800/50 text-slate-300 border-slate-600'
+                              }`}>
                                 {num}
                               </span>
                             ))}
@@ -255,7 +305,11 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
                           <div className="text-xs text-slate-500 mb-2">Consolation Prizes</div>
                           <div className="flex flex-wrap gap-2">
                             {parsedData.draw_winning_numbers.consolation.map((num, idx) => (
-                              <span key={idx} className="inline-flex items-center justify-center px-2 py-1 bg-slate-800/50 text-slate-300 font-mono text-sm rounded border border-slate-600">
+                              <span key={idx} className={`inline-flex items-center justify-center px-2 py-1 font-mono text-sm rounded border ${
+                                type === 'loss'
+                                  ? 'bg-slate-800/30 text-slate-400 border-slate-600/50'
+                                  : 'bg-slate-800/50 text-slate-300 border-slate-600'
+                              }`}>
                                 {num}
                               </span>
                             ))}
