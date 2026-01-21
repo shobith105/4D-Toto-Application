@@ -105,6 +105,54 @@ def create_win_notification(ticket_check: Dict[str, Any]) -> Dict[str, Any]:
 
         winning_combinations, total_payout, counts_by_group = _extract_win_info(ticket_check, draw_payload)
 
+        # Extract ticket numbers from entries
+        ticket_details = ticket.get("details", {}) or {}
+        ticket_numbers = []
+        if game_type == "TOTO":
+            # NEW format: toto_entries array
+            toto_entries = ticket_details.get("toto_entries") or []
+            if not toto_entries:
+                # OLD format: single toto_entry
+                toto_entry = ticket_details.get("toto_entry")
+                if toto_entry:
+                    toto_entries = [toto_entry]
+            
+            for entry in toto_entries:
+                entry_nums = entry.get("numbers", [])
+                if entry_nums:
+                    label = entry.get("label", "")
+                    ticket_numbers.append({
+                        "label": label,
+                        "numbers": sorted(entry_nums)
+                    })
+        elif game_type == "4D":
+            fourd_bets = ticket_details.get("fourd_bets") or []
+            for bet in fourd_bets:
+                ticket_numbers.append(bet.get("number"))
+
+        # Extract winning combinations from ticket check details
+        winning_combos = []
+        check_details = ticket_check.get("details", {})
+        if isinstance(check_details, dict):
+            # NEW format: details is dict with winning_details array
+            winning_details = check_details.get("winning_details", [])
+            for detail in winning_details:
+                winning_combos.append({
+                    "combination": detail.get("combination", []),
+                    "prize_group": detail.get("prize_group"),
+                    "main_matches": detail.get("main_matches"),
+                    "has_additional": detail.get("has_additional", False)
+                })
+        elif isinstance(check_details, list):
+            # OLD format: details is list of winning combos
+            for detail in check_details:
+                winning_combos.append({
+                    "combination": detail.get("combination", []),
+                    "prize_group": detail.get("prize_group"),
+                    "main_matches": detail.get("main_matches"),
+                    "has_additional": detail.get("has_additional", False)
+                })
+
         title = f"🎉 Congratulations! You Won {game_type}!"
         message = f"Your ticket has won Prize Group {prize_group} in the {game_type} Draw #{draw_no}!"
         if winning_combinations > 1:
@@ -125,7 +173,10 @@ def create_win_notification(ticket_check: Dict[str, Any]) -> Dict[str, Any]:
                 "prize_group": prize_group,
                 "winning_combinations": winning_combinations,
                 "total_payout": total_payout,
+                "prize_amount": total_payout,  # Alias for frontend compatibility
                 "counts_by_group": counts_by_group,
+                "ticket_numbers": ticket_numbers,
+                "winning_combos": winning_combos,  # User's winning combinations
                 "ticket_id": ticket_check["ticket_id"],
                 "ticket_check_id": str(ticket_check["id"]),
             },
