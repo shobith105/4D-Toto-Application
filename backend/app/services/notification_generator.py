@@ -108,8 +108,12 @@ def create_win_notification(ticket_check: Dict[str, Any]) -> Dict[str, Any]:
         # Extract ticket numbers from entries
         ticket_details = ticket.get("details", {}) or {}
         ticket_numbers = []
+        
+        # Extract draw winning numbers
+        draw_winning_numbers = {}
+        
         if game_type == "TOTO":
-            # NEW format: toto_entries array
+            # TOTO: Extract user's ticket numbers
             toto_entries = ticket_details.get("toto_entries") or []
             if not toto_entries:
                 # OLD format: single toto_entry
@@ -125,10 +129,51 @@ def create_win_notification(ticket_check: Dict[str, Any]) -> Dict[str, Any]:
                         "label": label,
                         "numbers": sorted(entry_nums)
                     })
+            
+            # TOTO: Extract draw winning numbers
+            draw_winning_numbers = {
+                "winning_numbers": sorted(draw_payload.get("winning_numbers", [])),
+                "additional_number": draw_payload.get("additional_number")
+            }
+            
         elif game_type == "4D":
+            # 4D: Extract user's bet numbers
             fourd_bets = ticket_details.get("fourd_bets") or []
             for bet in fourd_bets:
-                ticket_numbers.append(bet.get("number"))
+                number = bet.get("number")
+                bet_type = bet.get("bet_type") or bet.get("entry_type") or "Ordinary"
+                if number:
+                    ticket_numbers.append({
+                        "number": number,
+                        "bet_type": bet_type
+                    })
+            
+            # 4D: Extract draw winning numbers
+            top_prizes = draw_payload.get("top_prizes", {}) or {}
+            draw_winning_numbers = {
+                "first": top_prizes.get("first"),
+                "second": top_prizes.get("second"),
+                "third": top_prizes.get("third"),
+                "starter": draw_payload.get("starter_prizes", []),
+                "consolation": draw_payload.get("consolation_prizes", [])
+            }
+            
+            # For 4D, also extract which numbers actually won and in what category
+            check_details = ticket_check.get("details", {})
+            bet_results = check_details.get("bet_results", [])
+            winning_bets = []
+            for bet_result in bet_results:
+                if bet_result.get("best_category"):
+                    wins = bet_result.get("wins", [])
+                    for win in wins:
+                        winning_bets.append({
+                            "number": win.get("matched"),
+                            "category": win.get("category"),
+                            "payout": win.get("payout", 0)
+                        })
+            
+            if winning_bets:
+                draw_winning_numbers["your_matches"] = winning_bets
 
         # Extract winning combinations from ticket check details
         winning_combos = []
@@ -175,7 +220,8 @@ def create_win_notification(ticket_check: Dict[str, Any]) -> Dict[str, Any]:
                 "total_payout": total_payout,
                 "prize_amount": total_payout,  # Alias for frontend compatibility
                 "counts_by_group": counts_by_group,
-                "ticket_numbers": ticket_numbers,
+                "ticket_numbers": ticket_numbers,  # Your ticket numbers
+                "draw_winning_numbers": draw_winning_numbers,  # Official draw winning numbers
                 "winning_combos": winning_combos,  # User's winning combinations
                 "ticket_id": ticket_check["ticket_id"],
                 "ticket_check_id": str(ticket_check["id"]),
