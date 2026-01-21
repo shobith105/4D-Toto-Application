@@ -127,7 +127,7 @@ def parse_4d_tables_wrap(html: str) -> dict:
             for td in tr.find_all("td"):
                 num = cell_4d(td)
                 if num:
-                    starter.append(int(num))
+                    starter.append(num)
 
     # --- Table 3: consolation prizes ---
     consolation = []
@@ -137,7 +137,7 @@ def parse_4d_tables_wrap(html: str) -> dict:
             for td in tr.find_all("td"):
                 num = cell_4d(td)
                 if num:
-                    consolation.append(int(num))
+                    consolation.append(num)
 
     return {
         "game": "4d",
