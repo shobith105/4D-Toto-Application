@@ -14,6 +14,7 @@ UA = (
 )
 
 BASE_4D_URL = "https://www.singaporepools.com.sg/en/product/pages/4d_results.aspx"
+load_dotenv()
 url = os.environ["SUPABASE_URL"]
 key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
 supabase = create_client(url, key)
@@ -106,17 +107,17 @@ def parse_4d_tables_wrap(html: str) -> dict:
     if first_prize:
         num = cell_4d(first_prize)
         if num:
-            top_prizes["first"] = num
+            top_prizes["first"] = int(num)
     
     if second_prize:
         num = cell_4d(second_prize)
         if num:
-            top_prizes["second"] = num
+            top_prizes["second"] = int(num)
     
     if third_prize:
         num = cell_4d(third_prize)
         if num:
-            top_prizes["third"] = num
+            top_prizes["third"] = int(num)
 
     # --- Table 2: starter prizes ---
     starter = []
@@ -126,7 +127,7 @@ def parse_4d_tables_wrap(html: str) -> dict:
             for td in tr.find_all("td"):
                 num = cell_4d(td)
                 if num:
-                    starter.append(num)
+                    starter.append(int(num))
 
     # --- Table 3: consolation prizes ---
     consolation = []
@@ -136,7 +137,7 @@ def parse_4d_tables_wrap(html: str) -> dict:
             for td in tr.find_all("td"):
                 num = cell_4d(td)
                 if num:
-                    consolation.append(num)
+                    consolation.append(int(num))
 
     return {
         "game": "4d",
@@ -191,7 +192,7 @@ def get_latest_draw_no() -> int:
     if result.data and len(result.data) > 0:
         latest_draw = result.data[0]["draw_no"]
         print(f"[INFO] Latest draw in DB: {latest_draw}")
-        return latest_draw + 1
+        return 5317
     else:
         # No draws found, start with a default number
         print("[INFO] No draws found in DB, using default starting draw number")
@@ -236,9 +237,9 @@ def upsert_draw_result(payload: dict) -> bool:
         "draw_no": draw_no,
         "draw_date": payload.get("draw_date"),
         "result": {
-            "top_prizes": payload.get("top_prizes"),
-            "starter_prizes": payload.get("starter_prizes"),
-            "consolation_prizes": payload.get("consolation_prizes"),
+            "top_prizes": payload.get("top_prizes", []),
+            "starter_prizes": payload.get("starter_prizes", []),
+            "consolation_prizes": payload.get("consolation_prizes", []),
         }
         
     }
