@@ -263,6 +263,60 @@ def create_loss_notification(ticket_check: Dict[str, Any]) -> Dict[str, Any]:
         draw = draw_response.data
         draw_date = draw.get("draw_date")
         draw_no = draw.get("draw_no")
+        draw_payload = draw.get("result", {}) or {}
+
+        # Extract ticket numbers from entries
+        ticket_details = ticket.get("details", {}) or {}
+        ticket_numbers = []
+        
+        # Extract draw winning numbers
+        draw_winning_numbers = {}
+        
+        if game_type == "TOTO":
+            # TOTO: Extract user's ticket numbers
+            toto_entries = ticket_details.get("toto_entries") or []
+            if not toto_entries:
+                # OLD format: single toto_entry
+                toto_entry = ticket_details.get("toto_entry")
+                if toto_entry:
+                    toto_entries = [toto_entry]
+            
+            for entry in toto_entries:
+                entry_nums = entry.get("numbers", [])
+                if entry_nums:
+                    label = entry.get("label", "")
+                    ticket_numbers.append({
+                        "label": label,
+                        "numbers": sorted(entry_nums)
+                    })
+            
+            # TOTO: Extract draw winning numbers
+            draw_winning_numbers = {
+                "winning_numbers": sorted(draw_payload.get("winning_numbers", [])),
+                "additional_number": draw_payload.get("additional_number")
+            }
+            
+        elif game_type == "4D":
+            # 4D: Extract user's bet numbers
+            fourd_bets = ticket_details.get("fourd_bets") or []
+            for bet in fourd_bets:
+                number = bet.get("number")
+                bet_type = bet.get("bet_type") or bet.get("entry_type") or "Ordinary"
+                if number:
+                    ticket_numbers.append({
+                        "number": number,
+                        "bet_type": bet_type
+                    })
+            
+            # 4D: Extract draw winning numbers
+            top_prizes = draw_payload.get("top_prizes", {}) or {}
+            draw_winning_numbers = {
+                "first": top_prizes.get("first"),
+                "second": top_prizes.get("second"),
+                "third": top_prizes.get("third"),
+                "starter": draw_payload.get("starter_prizes", []),
+                "consolation": draw_payload.get("consolation_prizes", [])
+            }
 
         title = f"Draw Results: {game_type} Draw #{draw_no}"
         message = f"Your ticket for {game_type} Draw #{draw_no} did not win this time. Better luck next draw!"
@@ -277,6 +331,8 @@ def create_loss_notification(ticket_check: Dict[str, Any]) -> Dict[str, Any]:
                 "game_type": game_type,
                 "draw_date": str(draw_date),
                 "draw_no": draw_no,
+                "ticket_numbers": ticket_numbers,  # Your ticket numbers
+                "draw_winning_numbers": draw_winning_numbers,  # Official draw winning numbers
                 "ticket_id": ticket_check["ticket_id"],
                 "ticket_check_id": str(ticket_check["id"]),
             },
