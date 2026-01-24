@@ -192,7 +192,7 @@ def get_latest_draw_no() -> int:
     if result.data and len(result.data) > 0:
         latest_draw = result.data[0]["draw_no"]
         print(f"[INFO] Latest draw in DB: {latest_draw}")
-        return latest_draw + 1
+        return latest_draw +1
     else:
         # No draws found, start with a default number
         print("[INFO] No draws found in DB, using default starting draw number")
