@@ -1,37 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import PredictionCard from '../components/PredictionCard';
 import { AlertTriangle, BarChart2 } from 'lucide-react';
+import { getPredictions } from '../services/api';
 
 const PredictionsPage = () => {
   const [activeTab, setActiveTab] = useState('4d'); // '4d' or 'toto'
   const [loading, setLoading] = useState(false);
   const [predictions, setPredictions] = useState([]);
+  const [error, setError] = useState(null);
+  const [cache, setCache] = useState({});
 
-  // Mock Data for Demo (Replace this with actual fetch call to your API)
-  const mockData = {
-    '4d': [
-      { model_name: 'Statistical Frequency', predicted_numbers: ['0630', '8846', '6485'], confidence_score: 0.55, rationale: 'Identifies "Hot Numbers" based on historical frequency (Law of Large Numbers).' },
-      { model_name: 'XGBoost Regressor', predicted_numbers: ['6296', '1120', '4055'], confidence_score: 0.60, rationale: 'Uses Decision Trees to model the relationship between Draw Date and winning numbers.' },
-      { model_name: 'LSTM Neural Network', predicted_numbers: ['5124', '9901', '3321'], confidence_score: 0.45, rationale: 'A Neural Network that learns temporal patterns from the sequence of past 1st Prizes.' },
-    ],
-    'toto': [
-      { model_name: 'XGBoost Classifier', predicted_numbers: [5, 12, 23, 34, 40, 45], confidence_score: 0.65, rationale: 'Calculates the individual probability of each ball appearing based on calendar patterns.' },
-      { model_name: 'LSTM Sequence', predicted_numbers: [1, 8, 19, 22, 30, 49], confidence_score: 0.42, rationale: 'Recognizes sequential patterns and "momentum" in the winning numbers.' },
-    ]
-  };
+  // Cache expiry time (1 hour)
+  const CACHE_DURATION = 60 * 60 * 1000;
+
+  // Load cached predictions on component mount
+  useEffect(() => {
+    const cachedData = localStorage.getItem('predictions_cache');
+    if (cachedData) {
+      try {
+        const parsed = JSON.parse(cachedData);
+        setCache(parsed);
+      } catch (e) {
+        console.error('Failed to parse cache:', e);
+      }
+    }
+  }, []);
+
+  // Load predictions when tab changes
+  useEffect(() => {
+    const gameType = activeTab.toUpperCase();
+    const cached = cache[gameType];
+    
+    if (cached && (Date.now() - cached.timestamp < CACHE_DURATION)) {
+      // Use cached data
+      setPredictions(cached.data);
+    } else {
+      // Clear predictions when switching tabs if no valid cache
+      setPredictions([]);
+    }
+  }, [activeTab, cache]);
 
   const handleGenerate = async () => {
-    setLoading(true);
-    // Simulate API delay
-    setTimeout(() => {
-      setPredictions(mockData[activeTab]);
-      setLoading(false);
-    }, 1500);
+    const gameType = activeTab.toUpperCase();
     
-    // REAL CODE:
-    // const res = await fetch(`http://localhost:8000/api/predict/${activeTab}`);
-    // const data = await res.json();
-    // setPredictions(data);
+    // Check cache first
+    const cached = cache[gameType];
+    if (cached && (Date.now() - cached.timestamp < CACHE_DURATION)) {
+      setPredictions(cached.data);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const data = await getPredictions(gameType);
+      const newPredictions = data.predictions || [];
+      setPredictions(newPredictions);
+      
+      // Update cache
+      const newCache = {
+        ...cache,
+        [gameType]: {
+          data: newPredictions,
+          timestamp: Date.now()
+        }
+      };
+      setCache(newCache);
+      localStorage.setItem('predictions_cache', JSON.stringify(newCache));
+    } catch (err) {
+      console.error('Failed to fetch predictions:', err);
+      setError(err.response?.data?.detail || err.message || 'Failed to fetch predictions');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,7 +107,7 @@ const PredictionsPage = () => {
           {/* Game Toggle */}
           <div className="p-1 rounded-lg flex" style={{background: '#0f172a', border: '1px solid #1e293b'}}>
             <button
-              onClick={() => { setActiveTab('4d'); setPredictions([]); }}
+              onClick={() => setActiveTab('4d')}
               className="px-6 py-2 rounded-md text-sm font-medium transition-all"
               style={{
                 background: activeTab === '4d' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
@@ -86,7 +128,7 @@ const PredictionsPage = () => {
               4D
             </button>
             <button
-              onClick={() => { setActiveTab('toto'); setPredictions([]); }}
+              onClick={() => setActiveTab('toto')}
               className="px-6 py-2 rounded-md text-sm font-medium transition-all"
               style={{
                 background: activeTab === 'toto' ? 'rgba(124, 58, 237, 0.15)' : 'transparent',
@@ -134,6 +176,13 @@ const PredictionsPage = () => {
             {loading ? 'Running Models...' : `Generate ${activeTab.toUpperCase()} Forecast`}
           </button>
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6 p-4 rounded-lg" style={{background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.4)'}}>
+            <p style={{color: '#fca5a5'}}>{error}</p>
+          </div>
+        )}
 
         {/* Grid Layout for Cards */}
         {predictions.length > 0 ? (

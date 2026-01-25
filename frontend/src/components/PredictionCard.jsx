@@ -51,21 +51,32 @@ const PredictionCard = ({ modelName, numbers, confidence, rationale, type }) => 
 
       {/* The Numbers Display */}
       <div className="my-6">
-        <div className="flex flex-wrap gap-2 justify-center">
-          {numbers.map((num, idx) => (
-            <span 
-              key={idx}
-              className="inline-flex items-center justify-center font-mono font-bold shadow-sm"
-              style={type === '4d' 
-                ? { width: '48px', height: '48px', fontSize: '1.25rem', background: '#1e293b', color: 'white', borderRadius: '0.5rem', border: '1px solid #334155' }
-                : { width: '40px', height: '40px', fontSize: '1.125rem', background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', borderRadius: '9999px', border: '1px solid rgba(59, 130, 246, 0.3)' }
-              }
-            >
-              {num}
-            </span>
-          ))}
-        </div>
-        {type === '4d' && <p className="text-center text-xs mt-2" style={{color: '#64748b'}}>Predicted Top 3 Prizes</p>}
+        {type === '4d' ? (
+          <div className="space-y-3">
+            {numbers.map((num, idx) => (
+              <div key={idx} className="flex items-center justify-between px-4 py-2 rounded-lg" style={{background: '#1e293b', border: '1px solid #334155'}}>
+                <span className="text-xs font-semibold uppercase" style={{color: '#64748b'}}>
+                  {idx === 0 ? '1st Prize' : idx === 1 ? '2nd Prize' : '3rd Prize'}
+                </span>
+                <span className="font-mono font-bold text-xl text-white" style={{letterSpacing: '0.1em'}}>
+                  {num}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2 justify-center">
+            {numbers.map((num, idx) => (
+              <span 
+                key={idx}
+                className="inline-flex items-center justify-center font-mono font-bold shadow-sm"
+                style={{ width: '40px', height: '40px', fontSize: '1.125rem', background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', borderRadius: '9999px', border: '1px solid rgba(59, 130, 246, 0.3)' }}
+              >
+                {num}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Rationale Section (Educational Requirement) */}

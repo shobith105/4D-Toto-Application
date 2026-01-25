@@ -157,3 +157,16 @@ export async function deleteTicket(ticketId) {
         throw error;
     }
 }
+
+/**
+ * Get AI predictions for a specific game type
+ */
+export async function getPredictions(gameType) {
+    try {
+        const response = await axios.get(`${API_URL}/predictions/${gameType}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching predictions:", error);
+        throw error;
+    }
+}
