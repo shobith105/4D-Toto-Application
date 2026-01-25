@@ -11,36 +11,45 @@ async def get_predictions(game_type: str):
     Get predictions for next draw (Educational purposes only)
     Returns predictions from 3 different models with confidence scores
     """
-    # TODO: Run 3 predictive models
-    # TODO: Return predictions with confidence and model explanations
+    from app.services.dbconfig import supabase
+    
     if game_type not in ["4D", "TOTO"]:
         raise HTTPException(status_code=400, detail="Invalid game_type. Use '4D' or 'TOTO'")
     
-    # Placeholder response structure
-    return {
-        "disclaimer": "For educational purposes only. Not financial advice.",
-        "game_type": game_type,
-        "predictions": [
+    try:
+        # Fetch latest predictions for the game type, ordered by creation date
+        response = (
+            supabase
+            .table("prediction_logs")
+            .select("*")
+            .eq("game_type", game_type.lower())
+            .order("created_at", desc=True)
+            .limit(10)
+            .execute()
+        )
+        
+        predictions = response.data or []
+        
+        # Transform to match frontend expectations
+        formatted_predictions = [
             {
-                "model": "Frequency Analysis",
-                "predicted_numbers": [],
-                "confidence": 0.0,
-                "reasoning": "Not implemented"
-            },
-            {
-                "model": "Hot/Cold Number Analysis",
-                "predicted_numbers": [],
-                "confidence": 0.0,
-                "reasoning": "Not implemented"
-            },
-            {
-                "model": "Pattern Recognition",
-                "predicted_numbers": [],
-                "confidence": 0.0,
-                "reasoning": "Not implemented"
+                "model_name": pred["model_name"],
+                "predicted_numbers": pred["predicted_numbers"],
+                "confidence_score": pred["confidence_score"],
+                "rationale": f"AI model prediction based on historical draw patterns and statistical analysis."
             }
+            for pred in predictions
         ]
-    }
+        
+        return {
+            "disclaimer": "For educational purposes only. Not financial advice.",
+            "game_type": game_type,
+            "predictions": formatted_predictions
+        }
+        
+    except Exception as e:
+        print(f"Error fetching predictions: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch predictions: {str(e)}")
 
 
 @router.get("/history/{game_type}")
@@ -49,13 +58,4 @@ async def get_historical_draws(game_type: str, limit: int = 100):
     # TODO: Fetch from Supabase Historical_Draws table
     if game_type not in ["4D", "TOTO"]:
         raise HTTPException(status_code=400, detail="Invalid game_type. Use '4D' or 'TOTO'")
-    raise HTTPException(status_code=501, detail="Not implemented yet")
-
-
-@router.post("/train-models")
-async def train_prediction_models():
-    """Trigger retraining of predictive models with latest data"""
-    # TODO: Fetch historical data
-    # TODO: Retrain all 3 models
-    # TODO: Store updated model parameters
     raise HTTPException(status_code=501, detail="Not implemented yet")
