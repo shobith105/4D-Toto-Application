@@ -205,6 +205,7 @@ export default function TicketList() {
         {selectedTicket ? (
           <TicketDetails 
             ticketData={selectedTicket.details || selectedTicket}
+            allowEdit={false}
             onConfirm={(data) => {
               console.log('Confirmed ticket:', data);
               setSelectedTicket(null);
@@ -359,15 +360,6 @@ export default function TicketList() {
             }}
           >
             + Upload New Ticket
-          </button>
-          <button
-            onClick={() => console.log('Check all tickets')}
-            className="flex-1 py-3 rounded-lg font-semibold transition-all"
-            style={{background: '#0f172a', border: '1px solid #1e293b', color: 'white'}}
-            onMouseEnter={(e) => e.currentTarget.style.borderColor = '#7c3aed'}
-            onMouseLeave={(e) => e.currentTarget.style.borderColor = '#1e293b'}
-          >
-            Check All Results
           </button>
         </div>
 

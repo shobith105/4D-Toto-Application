@@ -64,7 +64,6 @@ export default function Verify() {
   const handleEdit = (data) => {
     // TODO: Navigate to edit page or show edit modal
     console.log('Edit ticket:', data);
-    alert('Edit functionality coming soon!');
   };
 
   if (!ticketData) {
