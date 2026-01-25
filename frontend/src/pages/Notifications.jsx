@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
 import NotificationCard from '../components/NotificationCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { 
@@ -90,15 +89,14 @@ const Notifications = () => {
   const unreadCount = notifications.filter(notif => !notif.is_read).length;
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <Navbar />
+    <div className="min-h-screen text-white" style={{backgroundColor: '#020617'}}>
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">Notifications</h1>
-              <p className="text-white/70">
+              <p style={{color: '#cbd5e1'}}>
                 {unreadCount > 0 ? (
                   <span>
                     You have <span className="text-white font-bold">{unreadCount}</span> unread notification{unreadCount !== 1 && 's'}
@@ -110,15 +108,21 @@ const Notifications = () => {
             </div>
             <div className="flex gap-3">
               <button
-                onClick={createMockNotification}
-                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-semibold"
+                onClick={handleCreateMockNotification}
+                className="px-6 py-3 rounded-lg transition-all font-semibold"
+                style={{background: '#7c3aed', color: 'white'}}
+                onMouseEnter={(e) => e.target.style.background = '#6d28d9'}
+                onMouseLeave={(e) => e.target.style.background = '#7c3aed'}
               >
-                Create MohandleCk Notification
+                Create Mock Notification
               </button>
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
-                  className="px-6 py-3 bg-white hover:bg-white/90 text-black rounded-lg transition-colors font-semibold"
+                  className="px-6 py-3 rounded-lg transition-all font-semibold"
+                  style={{background: '#10b981', color: 'white'}}
+                  onMouseEnter={(e) => e.target.style.background = '#059669'}
+                  onMouseLeave={(e) => e.target.style.background = '#10b981'}
                 >
                   Mark All as Read
                 </button>
@@ -127,34 +131,40 @@ const Notifications = () => {
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex gap-2 border-b border-white/20">
+          <div className="flex gap-2" style={{borderBottom: '1px solid #334155'}}>
             <button
               onClick={() => setFilter('all')}
-              className={`px-6 py-3 font-semibold transition-colors ${
-                filter === 'all'
-                  ? 'text-white border-b-2 border-white'
-                  : 'text-white/70 hover:text-white'
-              }`}
+              className="px-6 py-3 font-semibold transition-colors"
+              style={{
+                color: filter === 'all' ? 'white' : '#94a3b8',
+                borderBottom: filter === 'all' ? '2px solid #7c3aed' : 'none'
+              }}
+              onMouseEnter={(e) => { if (filter !== 'all') e.target.style.color = '#cbd5e1'; }}
+              onMouseLeave={(e) => { if (filter !== 'all') e.target.style.color = '#94a3b8'; }}
             >
               All ({notifications.length})
             </button>
             <button
               onClick={() => setFilter('unread')}
-              className={`px-6 py-3 font-semibold transition-colors ${
-                filter === 'unread'
-                  ? 'text-white border-b-2 border-white'
-                  : 'text-white/70 hover:text-white'
-              }`}
+              className="px-6 py-3 font-semibold transition-colors"
+              style={{
+                color: filter === 'unread' ? 'white' : '#94a3b8',
+                borderBottom: filter === 'unread' ? '2px solid #7c3aed' : 'none'
+              }}
+              onMouseEnter={(e) => { if (filter !== 'unread') e.target.style.color = '#cbd5e1'; }}
+              onMouseLeave={(e) => { if (filter !== 'unread') e.target.style.color = '#94a3b8'; }}
             >
               Unread ({unreadCount})
             </button>
             <button
               onClick={() => setFilter('read')}
-              className={`px-6 py-3 font-semibold transition-colors ${
-                filter === 'read'
-                  ? 'text-white border-b-2 border-white'
-                  : 'text-white/70 hover:text-white'
-              }`}
+              className="px-6 py-3 font-semibold transition-colors"
+              style={{
+                color: filter === 'read' ? 'white' : '#94a3b8',
+                borderBottom: filter === 'read' ? '2px solid #7c3aed' : 'none'
+              }}
+              onMouseEnter={(e) => { if (filter !== 'read') e.target.style.color = '#cbd5e1'; }}
+              onMouseLeave={(e) => { if (filter !== 'read') e.target.style.color = '#94a3b8'; }}
             >
               Read ({notifications.length - unreadCount})
             </button>
@@ -168,7 +178,8 @@ const Notifications = () => {
           <div className="text-center py-20">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-24 w-24 mx-auto mb-4 text-white/20"
+              className="h-24 w-24 mx-auto mb-4"
+              style={{color: '#334155'}}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -180,8 +191,8 @@ const Notifications = () => {
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
             </svg>
-            <h3 className="text-2xl font-bold text-white/70 mb-2">No notifications</h3>
-            <p className="text-white/70">
+            <h3 className="text-2xl font-bold mb-2" style={{color: '#cbd5e1'}}>No notifications</h3>
+            <p style={{color: '#94a3b8'}}>
               {filter === 'unread'
                 ? "You don't have any unread notifications"
                 : filter === 'read'

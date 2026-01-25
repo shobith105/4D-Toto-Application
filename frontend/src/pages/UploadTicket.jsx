@@ -120,27 +120,29 @@ export default function UploadTicket() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen text-white p-6" style={{backgroundColor: '#020617'}}>
       {/* Loading Overlay */}
       {uploading && <LoadingSpinner message="Processing Ticket" />}
       
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 backdrop-blur mb-4">
-            <span className="text-2xl font-bold text-white">M</span>
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl backdrop-blur mb-4" style={{background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)'}}>
+            <svg className="w-7 h-7" style={{color: '#10b981'}} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Upload Ticket</h1>
-          <p className="text-white/90">Snap a photo or upload from gallery</p>
+          <p style={{color: '#cbd5e1'}}>Snap a photo or upload from gallery</p>
         </div>
 
         {/* Upload Card */}
-        <div className="bg-white/5 rounded-2xl shadow-xl p-8 border border-white/20">
+        <div className="rounded-2xl shadow-2xl p-8" style={{background: '#0f172a', border: '1px solid #1e293b'}}>
           <form onSubmit={handleUpload} className="space-y-6">
             {/* Camera View */}
             {isCameraOpen ? (
               <div className="space-y-4">
-                <div className="relative border-2 border-slate-700 rounded-lg overflow-hidden bg-black">
+                <div className="relative rounded-lg overflow-hidden" style={{border: '2px solid #334155', background: '#000'}}>
                   <video
                     ref={videoRef}
                     autoPlay
@@ -152,14 +154,20 @@ export default function UploadTicket() {
                   <button
                     type="button"
                     onClick={closeCamera}
-                    className="flex-1 bg-white/5 text-white py-3 rounded-lg font-medium hover:bg-white/10 transition-colors"
+                    className="flex-1 py-3 rounded-lg font-semibold transition-all"
+                    style={{background: '#0f172a', border: '1px solid #1e293b', color: 'white'}}
+                    onMouseEnter={(e) => e.currentTarget.style.borderColor = '#334155'}
+                    onMouseLeave={(e) => e.currentTarget.style.borderColor = '#1e293b'}
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={capturePhoto}
-                    className="flex-1 bg-white text-black py-3 rounded-lg font-medium hover:bg-white/90 transition-colors"
+                    className="flex-1 py-3 rounded-lg font-semibold transition-all"
+                    style={{background: '#10b981', color: 'white'}}
+                    onMouseEnter={(e) => e.target.style.background = '#059669'}
+                    onMouseLeave={(e) => e.target.style.background = '#10b981'}
                   >
                     📸 Capture
                   </button>
@@ -169,7 +177,7 @@ export default function UploadTicket() {
               <>
                 {/* Preview Area */}
                 {preview ? (
-                  <div className="border-2 border-slate-700 rounded-lg overflow-hidden">
+                  <div className="rounded-lg overflow-hidden" style={{border: '2px solid #334155'}}>
                     <img 
                       src={preview} 
                       alt="Ticket preview" 
@@ -177,9 +185,10 @@ export default function UploadTicket() {
                     />
                   </div>
                 ) : (
-                  <div className="border-2 border-dashed border-white/20 rounded-lg p-12 text-center bg-black">
+                  <div className="rounded-lg p-16 text-center" style={{border: '2px dashed #334155', background: '#1e293b'}}>
                     <svg 
-                      className="w-16 h-16 mx-auto mb-4 text-white/70" 
+                      className="w-16 h-16 mx-auto mb-4" 
+                      style={{color: '#64748b'}}
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
@@ -191,8 +200,8 @@ export default function UploadTicket() {
                         d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
                       />
                     </svg>
-                    <p className="text-white/70 font-medium">No image selected</p>
-                    <p className="text-sm text-white/70 mt-1">Choose an option below</p>
+                    <p className="font-semibold text-white mb-1">Drag & Drop your ticket here</p>
+                    <p className="text-sm" style={{color: '#94a3b8'}}>or choose an option below</p>
                   </div>
                 )}
 
@@ -202,10 +211,20 @@ export default function UploadTicket() {
                   <button
                     type="button"
                     onClick={openCamera}
-                    className="flex flex-col items-center justify-center p-6 border-2 border-white/20 rounded-lg cursor-pointer hover:border-white hover:bg-white/10 transition-colors"
+                    className="flex flex-col items-center justify-center p-6 rounded-lg cursor-pointer transition-all"
+                    style={{border: '2px solid #334155', background: '#1e293b'}}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#7c3aed';
+                      e.currentTarget.style.background = '#0f172a';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#334155';
+                      e.currentTarget.style.background = '#1e293b';
+                    }}
                   >
                     <svg 
-                      className="w-10 h-10 mb-2 text-white/70" 
+                      className="w-10 h-10 mb-2" 
+                      style={{color: '#cbd5e1'}}
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
@@ -238,10 +257,20 @@ export default function UploadTicket() {
                     />
                     <label
                       htmlFor="gallery-input"
-                      className="flex flex-col items-center justify-center p-6 border-2 border-white/20 rounded-lg cursor-pointer hover:border-white hover:bg-white/10 transition-colors"
+                      className="flex flex-col items-center justify-center p-6 rounded-lg cursor-pointer transition-all"
+                      style={{border: '2px solid #334155', background: '#1e293b'}}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#10b981';
+                        e.currentTarget.style.background = '#0f172a';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = '#334155';
+                        e.currentTarget.style.background = '#1e293b';
+                      }}
                     >
                       <svg 
-                        className="w-10 h-10 mb-2 text-white/70" 
+                        className="w-10 h-10 mb-2" 
+                        style={{color: '#cbd5e1'}}
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -266,14 +295,28 @@ export default function UploadTicket() {
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="flex-1 bg-white/5 text-white py-3 rounded-lg font-medium hover:bg-white/10 transition-colors"
+                  className="flex-1 py-3 rounded-lg font-semibold transition-all"
+                  style={{background: '#0f172a', border: '1px solid #1e293b', color: 'white'}}
+                  onMouseEnter={(e) => e.currentTarget.style.borderColor = '#334155'}
+                  onMouseLeave={(e) => e.currentTarget.style.borderColor = '#1e293b'}
                 >
                   Clear
                 </button>
                 <button
                   type="submit"
                   disabled={uploading}
-                  className="flex-1 bg-white text-black py-3 rounded-lg font-medium hover:bg-white/90 disabled:bg-white/5 disabled:cursor-not-allowed transition-colors"
+                  className="flex-1 py-3 rounded-lg font-semibold transition-all"
+                  style={{
+                    background: uploading ? '#64748b' : '#10b981',
+                    color: 'white',
+                    cursor: uploading ? 'not-allowed' : 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!uploading) e.target.style.background = '#059669';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!uploading) e.target.style.background = '#10b981';
+                  }}
                 >
                   {uploading ? 'Uploading...' : 'Upload Ticket'}
                 </button>
@@ -283,9 +326,9 @@ export default function UploadTicket() {
 
           {/* Info Text */}
           {!isCameraOpen && (
-            <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/20">
-              <p className="text-sm text-white">
-                <strong>Tip:</strong> Make sure the ticket numbers are clearly visible for best results.
+            <div className="mt-6 p-4 rounded-lg" style={{background: 'rgba(124, 58, 237, 0.1)', border: '1px solid rgba(124, 58, 237, 0.3)'}}>
+              <p className="text-sm" style={{color: '#cbd5e1'}}>
+                <strong style={{color: '#a78bfa'}}>Tip:</strong> Make sure the ticket numbers are clearly visible for best results.
               </p>
             </div>
           )}
@@ -295,7 +338,10 @@ export default function UploadTicket() {
         <div className="text-center mt-6">
           <button
             onClick={() => navigate('/dashboard')}
-            className="text-white/70 hover:text-white font-medium transition-colors"
+            className="font-medium transition-colors"
+            style={{color: '#94a3b8'}}
+            onMouseEnter={(e) => e.target.style.color = '#cbd5e1'}
+            onMouseLeave={(e) => e.target.style.color = '#94a3b8'}
           >
             ← Back to Dashboard
           </button>

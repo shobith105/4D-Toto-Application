@@ -33,32 +33,32 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{backgroundColor: '#020617'}}>
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur mb-4">
-            <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-xl mb-4" style={{background: 'rgba(124, 58, 237, 0.15)', border: '1px solid rgba(124, 58, 237, 0.3)'}}>
+            <svg className="w-9 h-9" style={{color: '#7c3aed'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white">TicketSense</h1>
-          <p className="text-sm text-white/90 mt-1">4D & TOTO Dashboard</p>
+          <h1 className="text-3xl font-bold text-white">TicketSense</h1>
+          <p className="text-sm mt-2" style={{color: '#cbd5e1'}}>4D & TOTO Dashboard</p>
         </div>
 
-        {/* Login Card */}
-        <div className="bg-white/5 rounded-2xl shadow-lg p-8 border border-white/20">
-          <h2 className="text-xl text-center font-semibold text-white mb-6">Sign In</h2>
+        {/* Login Card with Glassmorphism */}
+        <div className="rounded-2xl shadow-2xl p-8 backdrop-blur-xl" style={{background: 'rgba(15, 23, 42, 0.7)', border: '1px solid #1e293b', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'}}>
+          <h2 className="text-2xl text-center font-semibold text-white mb-6">Sign In</h2>
 
           {error && (
-            <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-500 font-bold">
+            <div className="mb-4 rounded-lg px-4 py-3 text-sm font-semibold" style={{background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171'}}>
               {error}
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white/70 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium mb-2" style={{color: '#94a3b8'}}>
                 Email
               </label>
               <input
@@ -68,12 +68,19 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 rounded-lg border border-white/20 bg-black text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg text-white transition-all"
+                style={{
+                  background: '#1e293b',
+                  border: '1px solid #334155',
+                  outline: 'none'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#7c3aed'}
+                onBlur={(e) => e.target.style.borderColor = '#334155'}
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-white/70 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium mb-2" style={{color: '#94a3b8'}}>
                 Password
               </label>
               <input
@@ -83,12 +90,22 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-lg border border-white/20 bg-black text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
+                className="w-full px-4 py-3 rounded-lg text-white transition-all"
+                style={{
+                  background: '#1e293b',
+                  border: '1px solid #334155',
+                  outline: 'none'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#7c3aed'}
+                onBlur={(e) => e.target.style.borderColor = '#334155'}
               />
-              <div className="text-right mt-1">
+              <div className="text-right mt-2">
                 <button
                   onClick={() => navigate('/forgot-password')}
-                  className="text-xs text-white/70 hover:text-white font-medium"
+                  className="text-xs font-medium transition-colors"
+                  style={{color: '#94a3b8'}}
+                  onMouseEnter={(e) => e.target.style.color = '#cbd5e1'}
+                  onMouseLeave={(e) => e.target.style.color = '#94a3b8'}
                   type="button"
                 >
                   Forgot password?
@@ -99,18 +116,39 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-white text-black py-3 rounded-lg font-medium hover:bg-white/90 disabled:bg-white/20 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-black"
+              className="w-full py-3 rounded-lg font-semibold transition-all"
+              style={{
+                background: loading ? '#64748b' : '#7c3aed',
+                color: 'white',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                boxShadow: loading ? 'none' : '0 0 20px rgba(124, 58, 237, 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  e.target.style.background = '#6d28d9';
+                  e.target.style.boxShadow = '0 0 30px rgba(124, 58, 237, 0.5)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) {
+                  e.target.style.background = '#7c3aed';
+                  e.target.style.boxShadow = '0 0 20px rgba(124, 58, 237, 0.3)';
+                }
+              }}
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-white/70">
+            <p className="text-sm" style={{color: '#94a3b8'}}>
               Don&apos;t have an account?{' '}
               <button
                 onClick={() => navigate('/signup')}
-                className="font-semibold text-white hover:text-white/80"
+                className="font-semibold transition-colors"
+                style={{color: '#7c3aed'}}
+                onMouseEnter={(e) => e.target.style.color = '#6d28d9'}
+                onMouseLeave={(e) => e.target.style.color = '#7c3aed'}
                 type="button"
               >
                 Sign up
@@ -119,7 +157,7 @@ export default function Login() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-white/60 mt-6">
+        <p className="text-center text-xs mt-6" style={{color: '#64748b'}}>
           For entertainment and learning purposes only
         </p>
       </div>

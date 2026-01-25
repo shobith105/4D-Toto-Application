@@ -4,6 +4,78 @@
   padding: 0;
 }
 
+/* Midnight Luck Card Styles */
+.card {
+  background-color: #0f172a; /* Slate 900 */
+  border: 1px solid #1e293b; /* Slate 800 - Subtle border for depth */
+  border-radius: 12px;
+  padding: 2em;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+.card:hover {
+  border-color: #334155; /* Slate 700 */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+/* Primary Action Button (Violet) */
+.btn-primary {
+  background-color: #7c3aed; /* Violet 600 */
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #6d28d9; /* Darker violet */
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+}
+
+/* Success/Money Button (Green) */
+.btn-success {
+  background-color: #10b981; /* Emerald 500 */
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Status Badges */
+.badge-win {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-pending {
+  background-color: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-loss {
+  background-color: rgba(100, 116, 139, 0.2);
+  color: #94a3b8;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
 
 .logo {
   height: 6em;
@@ -11,11 +83,9 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #7c3aedaa);
 }
 
 @keyframes logo-spin {
@@ -33,10 +103,6 @@
   }
 }
 
-.card {
-  padding: 2em;
-}
-
 .read-the-docs {
-  color: #888;
+  color: #64748b;
 }

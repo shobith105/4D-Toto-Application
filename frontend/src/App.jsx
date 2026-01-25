@@ -11,25 +11,26 @@ import TicketList from "./pages/TicketList";
 import Dashboard from "./pages/Dashboard";
 import Verify from "./pages/Verify";
 import Notifications from "./pages/Notifications";
+import Navbar from "./components/Navbar";
 
 function App() {
  
   return (
     <Routes>
-      {/*Login & Auth Routes*/}
+      {/*Login & Auth Routes - No Navbar */}
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       
-      {/* App routes */}
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/home" element={<UploadTicket />} />
-      <Route path="/verify" element={<Verify />} />
-      <Route path="/details" element={<TicketList />} />
-      <Route path="/tickets" element={<TicketList />} />
-      <Route path="/notifications" element={<Notifications />} />
+      {/* App routes - With Navbar */}
+      <Route path="/dashboard" element={<><Navbar /><Dashboard /></>} />
+      <Route path="/home" element={<><Navbar /><UploadTicket /></>} />
+      <Route path="/verify" element={<><Navbar /><Verify /></>} />
+      <Route path="/details" element={<><Navbar /><TicketList /></>} />
+      <Route path="/tickets" element={<><Navbar /><TicketList /></>} />
+      <Route path="/notifications" element={<><Navbar /><Notifications /></>} />
 
       {/* Add more routes here as needed */}
     </Routes>
