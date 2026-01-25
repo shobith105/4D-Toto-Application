@@ -132,7 +132,7 @@ class TicketCreateData(BaseModel):
     draw_date: date
     ticket_price: confloat(ge=0)
 
-    fourd_bets: Optional[list] = None  # keep your actual type here
+    fourd_bets: Optional[List[FourDBet]] = None  
 
     # NEW
     toto_entries: Optional[List[TotoEntry]] = None
