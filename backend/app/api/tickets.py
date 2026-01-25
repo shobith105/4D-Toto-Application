@@ -58,10 +58,28 @@ async def upload_ticket(file: UploadFile = File(...), user_id: UUID = Depends(au
 
 
 @router.get("/")
-async def list_tickets(user_id: UUID):
+async def list_tickets(user_id: UUID = Depends(authorised_user)):
     """List all tickets for a user"""
-    # TODO: Fetch from Supabase
-    raise HTTPException(status_code=501, detail="Not implemented yet")
+    try:
+        from app.services.dbconfig import supabase
+        
+        # Fetch tickets for the authenticated user
+        response = supabase.table("tickets").select("*").eq("user_id", str(user_id)).order("created_at", desc=True).execute()
+        
+        if not response.data:
+            return {
+                "status": "success",
+                "tickets": []
+            }
+        
+        return {
+            "status": "success",
+            "tickets": response.data
+        }
+        
+    except Exception as e:
+        print(f"Error fetching tickets: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch tickets: {str(e)}")
 
 
 @router.get("/{ticket_id}")
