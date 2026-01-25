@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TicketDetails from '../components/TicketDetails';
-import supabase from '../services/supabaseClient';
+import { getTickets } from '../services/api';
 
 export default function TicketList() {
   const navigate = useNavigate();
@@ -11,28 +11,15 @@ export default function TicketList() {
   const [error, setError] = useState(null);
   const [selectedTicket, setSelectedTicket] = useState(null);
 
-  // Fetch tickets from Supabase
+  // Fetch tickets from backend API
   useEffect(() => {
     const fetchTickets = async () => {
       try {
         setLoading(true);
         
-        // Get current user
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
-          navigate('/login');
-          return;
-        }
-
-        // Fetch tickets for current user
-        const { data, error } = await supabase
-          .from('tickets')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
+        // Fetch tickets using API
+        const response = await getTickets();
+        const data = response.tickets || [];
 
         // Map database format to component format
         const mappedTickets = data.map(ticket => {
@@ -82,7 +69,14 @@ export default function TicketList() {
         setTickets(mappedTickets);
       } catch (error) {
         console.error('Error fetching tickets:', error);
-        setError(error.message);
+        
+        // Handle authentication errors
+        if (error.response?.status === 401) {
+          navigate('/login');
+          return;
+        }
+        
+        setError(error.message || 'Failed to fetch tickets');
       } finally {
         setLoading(false);
       }

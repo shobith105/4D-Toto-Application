@@ -123,3 +123,20 @@ export async function deleteNotification(notificationId) {
         throw error;
     }
 }
+
+/**
+ * Get all tickets for the authenticated user
+ */
+export async function getTickets() {
+    try {
+        const authHeaders = await getAuthHeaders();
+        
+        const response = await axios.get(`${API_URL}/tickets/`, {
+            headers: authHeaders
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching tickets:", error);
+        throw error;
+    }
+}
