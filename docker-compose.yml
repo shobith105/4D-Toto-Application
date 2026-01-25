@@ -1,0 +1,53 @@
+
+services:
+  # ==============================
+  # 1. Backend Service (FastAPI)
+  # ==============================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ticketsense_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Syncs your local code to the container for hot-reloading
+      - ./backend:/app
+    # METHOD A: Load the entire file
+    env_file:
+      - ./backend/.env
+    # METHOD B: Manual overrides (Optional)
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - app_network
+
+  # ==============================
+  # 2. Frontend Service (React/Vite)
+  # ==============================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ticketsense_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Prevents local node_modules from conflicting
+    env_file:
+      - ./frontend/.env
+    environment:
+      # Fix for Windows hot-reloading issues
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - backend
+    command: npm run dev -- --host 0.0.0.0
+    networks:
+      - app_network
+
+# Shared Network so containers can talk to each other
+networks:
+  app_network:
+    driver: bridge
