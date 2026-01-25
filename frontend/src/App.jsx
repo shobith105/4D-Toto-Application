@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Verify from "./pages/Verify";
 import Notifications from "./pages/Notifications";
 import Navbar from "./components/Navbar";
+import PredictionPage from "./pages/PredictionPage";
 
 function App() {
  
@@ -31,6 +32,7 @@ function App() {
       <Route path="/details" element={<><Navbar /><TicketList /></>} />
       <Route path="/tickets" element={<><Navbar /><TicketList /></>} />
       <Route path="/notifications" element={<><Navbar /><Notifications /></>} />
+      <Route path="/predictions" element={<><Navbar /><PredictionPage /></>} />
 
       {/* Add more routes here as needed */}
     </Routes>
