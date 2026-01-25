@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TicketDetails from '../components/TicketDetails';
-import { getTickets } from '../services/api';
+import { getTickets, deleteTicket } from '../services/api';
 
 export default function TicketList() {
   const navigate = useNavigate();
@@ -9,7 +9,40 @@ export default function TicketList() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [actionError, setActionError] = useState(null);
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+
+  const handleDeleteTicket = async (ticketId) => {
+    if (!window.confirm('Are you sure you want to delete this ticket?')) {
+      return;
+    }
+
+    try {
+      setActionError(null);
+      setDeletingId(ticketId);
+
+      await deleteTicket(ticketId);
+
+      setTickets((prev) => prev.filter((ticket) => ticket.uuid !== ticketId));
+
+      if (selectedTicket?.uuid === ticketId) {
+        setSelectedTicket(null);
+      }
+    } catch (deleteError) {
+      console.error('Error deleting ticket:', deleteError);
+
+      if (deleteError.response?.status === 401) {
+        navigate('/login');
+        return;
+      }
+
+      const message = deleteError.response?.data?.detail || deleteError.message || 'Failed to delete ticket';
+      setActionError(message);
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   // Fetch tickets from backend API
   useEffect(() => {
@@ -162,6 +195,12 @@ export default function TicketList() {
           </div>
         </div>
 
+        {actionError && (
+          <div className="mb-4 rounded-lg border px-4 py-3" style={{background: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#fecdd3'}}>
+            {actionError}
+          </div>
+        )}
+
         {/* Tickets List */}
         {selectedTicket ? (
           <TicketDetails 
@@ -174,6 +213,7 @@ export default function TicketList() {
               console.log('Edit ticket:', data);
               // TODO: Show edit form
             }}
+            onDelete={() => handleDeleteTicket(selectedTicket.uuid)}
           />
         ) : (
           <div className="space-y-4">
@@ -226,6 +266,23 @@ export default function TicketList() {
                         +${ticket.prize_amount.toLocaleString()}
                       </span>
                     )}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTicket(ticket.uuid);
+                      }}
+                      disabled={deletingId === ticket.uuid}
+                      className="px-3 py-1 rounded-lg text-sm font-semibold transition-colors"
+                      style={{
+                        background: '#1e293b',
+                        border: '1px solid #334155',
+                        color: '#fca5a5',
+                        opacity: deletingId === ticket.uuid ? 0.6 : 1
+                      }}
+                    >
+                      {deletingId === ticket.uuid ? 'Deleting…' : 'Delete'}
+                    </button>
                   </div>
                 </div>
 

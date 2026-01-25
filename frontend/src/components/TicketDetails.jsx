@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Keep this import as it might be used later or for consistency
 
-export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
+export default function TicketDetails({ ticketData, onConfirm, onEdit, onDelete }) {
   const navigate = useNavigate();
   
   const {
@@ -26,6 +26,12 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
   const handleEdit = () => {
     if (onEdit) {
       onEdit(ticketData);
+    }
+  };
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(ticketData);
     }
   };
 
@@ -188,11 +194,27 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
       )}
 
       {/* Action Buttons */}
-      <div className="flex gap-4 pt-4">
+      <div className="flex gap-4 pt-4 flex-wrap">
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="flex-1 min-w-[160px] py-3 rounded-lg font-semibold transition-all"
+          style={{background: 'rgba(239, 68, 68, 0.12)', border: '2px solid #ef4444', color: '#fecdd3'}}
+          onMouseEnter={(e) => {
+            e.target.style.background = 'rgba(239, 68, 68, 0.18)';
+            e.target.style.borderColor = '#f87171';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'rgba(239, 68, 68, 0.12)';
+            e.target.style.borderColor = '#ef4444';
+          }}
+        >
+          Delete Ticket
+        </button>
         <button
           type="button"
           onClick={handleEdit}
-          className="flex-1 py-3 rounded-lg font-semibold transition-all"
+          className="flex-1 min-w-[160px] py-3 rounded-lg font-semibold transition-all"
           style={{background: 'transparent', border: '2px solid #334155', color: '#cbd5e1'}}
           onMouseEnter={(e) => {
             e.target.style.borderColor = '#7c3aed';
@@ -208,7 +230,7 @@ export default function TicketDetails({ ticketData, onConfirm, onEdit }) {
         <button
           type="button"
           onClick={handleConfirm}
-          className="flex-1 py-3 rounded-lg font-semibold transition-all"
+          className="flex-1 min-w-[160px] py-3 rounded-lg font-semibold transition-all"
           style={{background: '#7c3aed', color: 'white', boxShadow: '0 0 20px rgba(124, 58, 237, 0.3)'}}
           onMouseEnter={(e) => {
             e.target.style.background = '#6d28d9';

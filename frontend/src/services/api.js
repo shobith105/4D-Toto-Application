@@ -140,3 +140,20 @@ export async function getTickets() {
         throw error;
     }
 }
+
+/**
+ * Delete a ticket by ID for the authenticated user
+ */
+export async function deleteTicket(ticketId) {
+    try {
+        const authHeaders = await getAuthHeaders();
+
+        const response = await axios.delete(`${API_URL}/tickets/${ticketId}`, {
+            headers: authHeaders
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting ticket:", error);
+        throw error;
+    }
+}
