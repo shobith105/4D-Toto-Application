@@ -100,7 +100,30 @@ async def check_ticket(ticket_id: UUID):
 
 
 @router.delete("/{ticket_id}")
-async def delete_ticket(ticket_id: UUID):
-    """Delete a ticket"""
-    # TODO: Delete from Supabase
-    raise HTTPException(status_code=501, detail="Not implemented yet")
+async def delete_ticket(ticket_id: UUID, user_id: UUID = Depends(authorised_user)):
+    """Delete a ticket owned by the authenticated user."""
+    try:
+        from app.services.dbconfig import supabase
+
+        response = (
+            supabase
+            .table("tickets")
+            .delete()
+            .eq("id", str(ticket_id))
+            .eq("user_id", str(user_id))
+            .execute()
+        )
+
+        if not getattr(response, "data", None):
+            raise HTTPException(status_code=404, detail="Ticket not found")
+
+        return {
+            "status": "success",
+            "message": "Ticket deleted successfully",
+            "ticket_id": str(ticket_id),
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error deleting ticket {ticket_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete ticket")
