@@ -27,7 +27,7 @@ function App() {
       
       {/* App routes - With Navbar */}
       <Route path="/dashboard" element={<><Navbar /><Dashboard /></>} />
-      <Route path="/home" element={<><Navbar /><UploadTicket /></>} />
+      <Route path="/upload" element={<><Navbar /><UploadTicket /></>} />
       <Route path="/verify" element={<><Navbar /><Verify /></>} />
       <Route path="/details" element={<><Navbar /><TicketList /></>} />
       <Route path="/tickets" element={<><Navbar /><TicketList /></>} />

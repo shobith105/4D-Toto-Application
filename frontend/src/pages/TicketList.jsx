@@ -175,26 +175,6 @@ export default function TicketList() {
           <p style={{color: '#cbd5e1'}}>View all your submitted tickets</p>
         </div>
 
-        {/* Stats Summary with new theme */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="rounded-lg p-4 text-center" style={{background: '#0f172a', border: '1px solid #1e293b'}}>
-            <div className="text-2xl font-bold text-white">{tickets.length}</div>
-            <div className="text-sm" style={{color: '#94a3b8'}}>Total Tickets</div>
-          </div>
-          <div className="rounded-lg p-4 text-center" style={{background: '#0f172a', border: '1px solid #1e293b'}}>
-            <div className="text-2xl font-bold" style={{color: '#fbbf24'}}>
-              {tickets.filter(t => t.win_status === 'pending').length}
-            </div>
-            <div className="text-sm" style={{color: '#94a3b8'}}>Pending</div>
-          </div>
-          <div className="rounded-lg p-4 text-center" style={{background: '#0f172a', border: '1px solid #1e293b'}}>
-            <div className="text-2xl font-bold" style={{color: '#10b981'}}>
-              {tickets.filter(t => t.win_status === 'win').length}
-            </div>
-            <div className="text-sm" style={{color: '#94a3b8'}}>Wins</div>
-          </div>
-        </div>
-
         {actionError && (
           <div className="mb-4 rounded-lg border px-4 py-3" style={{background: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#fecdd3'}}>
             {actionError}
@@ -333,7 +313,7 @@ export default function TicketList() {
             <h3 className="text-lg font-semibold text-white mb-2">No tickets yet</h3>
             <p className="mb-6" style={{color: '#94a3b8'}}>Upload your first ticket to get started</p>
             <button
-              onClick={() => navigate('/home')}
+              onClick={() => navigate('/upload')}
               className="px-6 py-3 rounded-lg font-semibold transition-all"
               style={{background: '#10b981', color: 'white'}}
               onMouseEnter={(e) => e.target.style.background = '#059669'}
@@ -347,7 +327,7 @@ export default function TicketList() {
         {/* Action Buttons */}
         <div className="flex gap-4 mt-8">
           <button
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/upload')}
             className="flex-1 py-3 rounded-lg font-semibold transition-all"
             style={{background: '#10b981', color: 'white'}}
             onMouseEnter={(e) => {

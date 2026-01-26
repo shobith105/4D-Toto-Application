@@ -163,7 +163,10 @@ export async function deleteTicket(ticketId) {
  */
 export async function getPredictions(gameType) {
     try {
-        const response = await axios.get(`${API_URL}/predictions/${gameType}`);
+        const authHeaders = await getAuthHeaders();
+        const response = await axios.get(`${API_URL}/predictions/${gameType}`,
+            { headers: authHeaders }
+        );
         return response.data;
     } catch (error) {
         console.error("Error fetching predictions:", error);

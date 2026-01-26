@@ -23,7 +23,7 @@ export default function Login() {
       if (error) throw error;
 
       if (data.user) {
-        navigate('/home');
+        navigate('/upload');
       }
     } catch (error) {
       setError(error.message || 'An error occurred during login');

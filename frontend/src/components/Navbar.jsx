@@ -34,7 +34,7 @@ const Navbar = () => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
       alert('Failed to logout. Please try again.');
@@ -102,21 +102,21 @@ const Navbar = () => {
           </Link>
 
           <Link 
-            to="/home" 
+            to="/upload" 
             className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all"
             style={{
-              color: isActive('/home') ? '#c4b5fd' : '#94a3b8',
-              backgroundColor: isActive('/home') ? 'rgba(124, 58, 237, 0.1)' : 'transparent',
-              border: isActive('/home') ? '1px solid rgba(124, 58, 237, 0.2)' : '1px solid transparent'
+              color: isActive('/upload') ? '#c4b5fd' : '#94a3b8',
+              backgroundColor: isActive('/upload') ? 'rgba(124, 58, 237, 0.1)' : 'transparent',
+              border: isActive('/upload') ? '1px solid rgba(124, 58, 237, 0.2)' : '1px solid transparent'
             }}
             onMouseEnter={(e) => {
-              if (!isActive('/home')) {
+              if (!isActive('/upload')) {
                 e.currentTarget.style.color = '#f8fafc';
                 e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
               }
             }}
             onMouseLeave={(e) => {
-              if (!isActive('/home')) {
+              if (!isActive('/upload')) {
                 e.currentTarget.style.color = '#94a3b8';
                 e.currentTarget.style.backgroundColor = 'transparent';
               }

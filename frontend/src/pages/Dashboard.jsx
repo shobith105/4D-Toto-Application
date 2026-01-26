@@ -16,10 +16,11 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions - Improved Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
+        <div className="flex justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
           {/* Upload Card with Emerald Accent */}
           <div
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/upload')}
             className="rounded-xl p-6 cursor-pointer group transition-all duration-300"
             style={{
               background: '#0f172a',
@@ -84,26 +85,6 @@ const Dashboard = () => {
               </svg>
             </div>
           </div>
-        </div>
-
-        {/* Recent Activity Section */}
-        <div className="max-w-4xl mx-auto">
-          <div className="rounded-xl p-6" style={{background: '#0f172a', border: '1px solid #1e293b'}}>
-            <h3 className="text-xl font-bold text-white mb-4">Quick Stats</h3>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-4 rounded-lg" style={{background: '#1e293b'}}>
-                <div className="text-3xl font-bold text-white mb-1">0</div>
-                <div className="text-sm" style={{color: '#94a3b8'}}>Total Tickets</div>
-              </div>
-              <div className="text-center p-4 rounded-lg" style={{background: '#1e293b'}}>
-                <div className="text-3xl font-bold mb-1" style={{color: '#fbbf24'}}>0</div>
-                <div className="text-sm" style={{color: '#94a3b8'}}>Pending Draws</div>
-              </div>
-              <div className="text-center p-4 rounded-lg" style={{background: '#1e293b'}}>
-                <div className="text-3xl font-bold mb-1" style={{color: '#10b981'}}>0</div>
-                <div className="text-sm" style={{color: '#94a3b8'}}>Total Wins</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

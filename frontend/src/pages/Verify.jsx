@@ -15,8 +15,8 @@ export default function Verify() {
   // Redirect if no ticket data
   React.useEffect(() => {
     if (!ticketData) {
-      console.log('No ticket data, redirecting to /home');
-      navigate('/home');
+      console.log('No ticket data, redirecting to /upload');
+      navigate('/upload');
     }
   }, [ticketData, navigate]);
 
@@ -94,7 +94,7 @@ export default function Verify() {
         {/* Back Button */}
         <div className="text-center mt-6">
           <button
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/upload')}
             className="font-medium transition-colors"
             style={{color: '#94a3b8'}}
             onMouseEnter={(e) => e.target.style.color = '#cbd5e1'}
