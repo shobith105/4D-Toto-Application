@@ -211,25 +211,103 @@ Upload and process a lottery ticket image using OCR.
 - Body: `file` (image file - PNG, JPEG, WEBP, or BMP)
 - Max file size: 5MB
 
-**Response:**
+**Response (4D Ticket):**
 ```json
 {
   "status": "success",
   "message": "Ticket processed successfully",
   "data": {
     "game_type": "4D",
-    "numbers": ["1234", "5678"],
-    "draw_date": "2026-01-26",
-    "amount_paid": 2.00
+    "draw_date": "2025-04-23",
+    "ticket_price": 60.0,
+    "fourd_bets": [
+      {
+        "entry_type": "Ordinary",
+        "number": "5716",
+        "roll_pattern": null,
+        "big_amount": 10.0,
+        "small_amount": 10.0,
+        "permutations": null
+      },
+      {
+        "entry_type": "Ordinary",
+        "number": "4145",
+        "roll_pattern": null,
+        "big_amount": 10.0,
+        "small_amount": 10.0,
+        "permutations": null
+      },
+      {
+        "entry_type": "Ordinary",
+        "number": "4045",
+        "roll_pattern": null,
+        "big_amount": 10.0,
+        "small_amount": 10.0,
+        "permutations": null
+      }
+    ],
+    "toto_entries": null,
+    "toto_entry": null
   }
 }
 ```
+
+**Response (TOTO Ticket):**
+```json
+{
+  "status": "success",
+  "message": "Ticket processed successfully",
+  "data": {
+    "game_type": "TOTO",
+    "draw_date": "2026-01-22",
+    "ticket_price": 14,
+    "fourd_bets": null,
+    "toto_entries": [
+      {
+        "label": "A",
+        "numbers": [5, 10, 13, 18, 21, 27, 37],
+        "bet_type": "System",
+        "system_roll": null,
+        "system_size": 7
+      },
+      {
+        "label": "B",
+        "numbers": [2, 17, 30, 37, 38, 41, 43],
+        "bet_type": "System",
+        "system_roll": null,
+        "system_size": 7
+      }
+    ],
+    "toto_entry": null
+  }
+}
+```
+
+**Data Fields:**
+- `game_type`: Type of lottery game (`4D` or `TOTO`)
+- `draw_date`: Date of the draw (ISO format)
+- `ticket_price`: Total price paid for the ticket
+- `fourd_bets`: Array of 4D bet entries (null for TOTO tickets)
+  - `entry_type`: Bet type (e.g., `Ordinary`, `System`, `iBet`)
+  - `number`: 4-digit number
+  - `big_amount`: Amount bet on Big prize
+  - `small_amount`: Amount bet on Small prize
+  - `roll_pattern`: Roll pattern if applicable (e.g., `R123`)
+  - `permutations`: Array of permutation numbers if System bet
+- `toto_entries`: Array of TOTO entries (null for 4D tickets)
+  - `label`: Entry label (e.g., `A`, `B`, `C`)
+  - `numbers`: Selected numbers (6 for Ordinary, 7+ for System)
+  - `bet_type`: Entry type (e.g., `Ordinary`, `System`)
+  - `system_roll`: Roll number if applicable (e.g., `1`, `2`)
+  - `system_size`: Number of selected numbers for System bets (7, 8, 9, etc.)
+- `toto_entry`: Legacy field (always null)
 
 **Error Responses:**
 - `400`: Invalid file type
 - `413`: File too large
 - `422`: Validation error or OCR processing error
 - `500`: Unexpected server error
+- `504`: OCR timeout
 
 ---
 
@@ -238,9 +316,60 @@ Upload and process a lottery ticket image using OCR.
 GET /api/tickets/
 ```
 
-Retrieve all tickets for the authenticated user.
+Retrieve all tickets for the authenticated user, ordered by creation date (newest first).
 
-**Response:**
+**Response (4D Ticket):**
+```json
+{
+  "status": "success",
+  "tickets": [
+    {
+      "id": "3a70c075-cc4e-47f3-b52c-17e6a950ac85",
+      "user_id": "913b939b-fbb8-47ce-8372-d8b52817babe",
+      "game_type": "4D",
+      "draw_date": "2025-04-16",
+      "ticket_price": 120.0,
+      "status": "draft",
+      "created_at": "2026-01-26T10:53:37.977643+00:00",
+      "details": {
+        "game_type": "4D",
+        "draw_date": "2025-04-16",
+        "ticket_price": 120,
+        "fourd_bets": [
+          {
+            "entry_type": "Ordinary",
+            "number": "0616",
+            "roll_pattern": null,
+            "big_amount": 20,
+            "small_amount": 20,
+            "permutations": null
+          },
+          {
+            "entry_type": "Ordinary",
+            "number": "0193",
+            "roll_pattern": null,
+            "big_amount": 20,
+            "small_amount": 20,
+            "permutations": null
+          },
+          {
+            "entry_type": "Ordinary",
+            "number": "2028",
+            "roll_pattern": null,
+            "big_amount": 20,
+            "small_amount": 20,
+            "permutations": null
+          }
+        ],
+        "toto_entries": null,
+        "toto_entry": null
+      }
+    }
+  ]
+}
+```
+
+**Response (TOTO Ticket):**
 ```json
 {
   "status": "success",
@@ -248,15 +377,41 @@ Retrieve all tickets for the authenticated user.
     {
       "id": "uuid",
       "user_id": "uuid",
-      "game_type": "4D",
-      "numbers": ["1234"],
-      "draw_date": "2026-01-26",
-      "amount_paid": 1.00,
-      "created_at": "2026-01-26T10:30:00Z"
+      "game_type": "TOTO",
+      "draw_date": "2026-01-22",
+      "ticket_price": 14,
+      "status": "draft",
+      "created_at": "2026-01-26T11:00:00+00:00",
+      "details": {
+        "game_type": "TOTO",
+        "draw_date": "2026-01-22",
+        "ticket_price": 14,
+        "fourd_bets": null,
+        "toto_entries": [
+          {
+            "label": "A",
+            "numbers": [5, 10, 13, 18, 21, 27, 37],
+            "bet_type": "System",
+            "system_roll": null,
+            "system_size": 7
+          }
+        ],
+        "toto_entry": null
+      }
     }
   ]
 }
 ```
+
+**Fields:**
+- `id`: Unique ticket identifier (UUID)
+- `user_id`: Owner's user ID (UUID)
+- `game_type`: `4D` or `TOTO`
+- `draw_date`: Draw date (ISO format)
+- `ticket_price`: Total amount paid
+- `status`: Ticket status (e.g., `draft`, `active`)
+- `created_at`: Creation timestamp (ISO format with timezone)
+- `details`: Full ticket data (same structure as upload response data field)
 
 ---
 
@@ -368,23 +523,6 @@ Delete a specific notification.
 
 **Parameters:**
 - `notification_id` (path): ID of the notification to delete
-
----
-
-#### Create Mock Notification (Testing)
-```http
-POST /api/notifications/mock
-```
-
-Create a mock notification for testing purposes.
-
-**Response:**
-```json
-{
-  "message": "Mock notification created successfully",
-  "notification": { /* notification object */ }
-}
-```
 
 ---
 
