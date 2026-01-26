@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from uuid import UUID
+from app.services.dbconfig import authorised_user
+from fastapi import APIRouter, HTTPException,Depends
 from datetime import date
 from typing import List
 
@@ -6,7 +8,7 @@ router = APIRouter(prefix="/predictions", tags=["predictions"])
 
 
 @router.get("/{game_type}")
-async def get_predictions(game_type: str):
+async def get_predictions(game_type: str,user_id:UUID = Depends(authorised_user)):
     """
     Get predictions for next draw (Educational purposes only)
     Returns predictions from 3 different models with confidence scores
@@ -51,11 +53,3 @@ async def get_predictions(game_type: str):
         print(f"Error fetching predictions: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to fetch predictions: {str(e)}")
 
-
-@router.get("/history/{game_type}")
-async def get_historical_draws(game_type: str, limit: int = 100):
-    """Get historical draw data for analysis"""
-    # TODO: Fetch from Supabase Historical_Draws table
-    if game_type not in ["4D", "TOTO"]:
-        raise HTTPException(status_code=400, detail="Invalid game_type. Use '4D' or 'TOTO'")
-    raise HTTPException(status_code=501, detail="Not implemented yet")
