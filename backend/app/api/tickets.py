@@ -4,7 +4,7 @@ from uuid import UUID
 from app.models import TicketCreateData
 from app.ocr.ocr_engine import process_image_with_gemini
 from app.ocr.ocr_timeout import run_blocking_with_timeout
-from app.services.dbconfig import authorised_user, save_ticket_details
+from app.services.dbconfig import authorised_user, save_ticket_details,supabase
 
 router = APIRouter(prefix="/tickets", tags=["tickets"])
 
@@ -61,8 +61,6 @@ async def upload_ticket(file: UploadFile = File(...), user_id: UUID = Depends(au
 async def list_tickets(user_id: UUID = Depends(authorised_user)):
     """List all tickets for a user"""
     try:
-        from app.services.dbconfig import supabase
-        
         # Fetch tickets for the authenticated user
         response = supabase.table("tickets").select("*").eq("user_id", str(user_id)).order("created_at", desc=True).execute()
         
@@ -86,7 +84,6 @@ async def list_tickets(user_id: UUID = Depends(authorised_user)):
 async def delete_ticket(ticket_id: UUID, user_id: UUID = Depends(authorised_user)):
     """Delete a ticket owned by the authenticated user."""
     try:
-        from app.services.dbconfig import supabase
 
         response = (
             supabase
