@@ -147,7 +147,7 @@ def test_upload_invalid_ocr_data(mock_timeout, override_auth_dependency, mock_au
 
 # ==================== GET /tickets/ Tests ====================
 
-@patch('app.services.dbconfig.supabase')
+@patch('app.api.tickets.supabase')
 def test_get_tickets_success(mock_supabase, override_auth_dependency, mock_user_id, mock_auth_header):
     """Test successful retrieval of tickets"""
     mock_tickets = [
@@ -173,7 +173,7 @@ def test_get_tickets_success(mock_supabase, override_auth_dependency, mock_user_
     assert data["tickets"][0]["game_type"] == "4D"
 
 
-@patch('app.services.dbconfig.supabase')
+@patch('app.api.tickets.supabase')
 def test_get_tickets_empty(mock_supabase, override_auth_dependency, mock_auth_header):
     """Test retrieval when user has no tickets"""
     mock_response = MagicMock()
@@ -188,7 +188,7 @@ def test_get_tickets_empty(mock_supabase, override_auth_dependency, mock_auth_he
     assert data["tickets"] == []
 
 
-@patch('app.services.dbconfig.supabase')
+@patch('app.api.tickets.supabase')
 def test_get_tickets_multiple(mock_supabase, override_auth_dependency, mock_auth_header):
     """Test retrieval of multiple tickets"""
     mock_tickets = [
@@ -207,7 +207,7 @@ def test_get_tickets_multiple(mock_supabase, override_auth_dependency, mock_auth
     assert len(data["tickets"]) == 2
 
 
-@patch('app.services.dbconfig.supabase')
+@patch('app.api.tickets.supabase')
 def test_get_tickets_database_error(mock_supabase, override_auth_dependency, mock_auth_header):
     """Test handling of database errors"""
     mock_supabase.table.return_value.select.return_value.eq.return_value.order.return_value.execute.side_effect = Exception("Database error")
@@ -219,7 +219,7 @@ def test_get_tickets_database_error(mock_supabase, override_auth_dependency, moc
     
 # ==================== DELETE /tickets/{ticket_id} Tests ====================
 
-@patch('app.services.dbconfig.supabase')
+@patch('app.api.tickets.supabase')
 def test_delete_ticket_success(mock_supabase, override_auth_dependency, mock_auth_header):
     """Test successful deletion of a ticket"""
     ticket_id = str(uuid4())
@@ -237,7 +237,7 @@ def test_delete_ticket_success(mock_supabase, override_auth_dependency, mock_aut
     assert response.json()["status"] == "success"
     assert response.json()["ticket_id"] == ticket_id
 
-@patch('app.services.dbconfig.supabase')
+@patch('app.api.tickets.supabase')
 def test_delete_ticket_not_found(mock_supabase, override_auth_dependency, mock_auth_header):
     """Test deletion when ticket doesn't exist or belongs to another user"""
     ticket_id = str(uuid4())
