@@ -89,6 +89,7 @@ npm install
 ```env
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_API_URL=http://localhost:8000
 ```
 
 4. Start the development server:
@@ -106,6 +107,354 @@ If you prefer using Docker, you can run both services using Docker Compose:
 docker-compose up
 ```
 
+## Architecture Overview
+
+The application follows a modern three-tier architecture:
+
+### System Architecture
+
+```
+┌─────────────┐         ┌─────────────┐         ┌─────────────┐
+│   Frontend  │────────▶│   Backend   │────────▶│  Supabase   │
+│   (React)   │◀────────│  (FastAPI)  │◀────────│  (Database) │
+└─────────────┘         └─────────────┘         └─────────────┘
+                              │
+                              │
+                    ┌─────────┴─────────┐
+                    │                   │
+                    ▼                   ▼
+            ┌───────────────┐   ┌───────────────┐
+            │  OCR Engine   │   │  Web Scrapers │
+            │   (Gemini)    │   │  (4D & Toto)  │
+            └───────────────┘   └───────────────┘
+```
+
+### Component Breakdown
+
+#### Frontend Layer
+- **React + Vite**: Modern, fast development experience
+- **React Router**: Client-side routing for SPA navigation
+- **Axios**: HTTP client for API communication
+- **TailwindCSS**: Utility-first CSS framework for rapid UI development
+- **Supabase Client**: Direct authentication and real-time subscriptions
+
+#### Backend Layer
+- **FastAPI**: High-performance Python web framework
+  - Async/await support for concurrent operations
+  - Automatic API documentation (Swagger/OpenAPI)
+  - Type validation with Pydantic
+- **OCR Module**: Image processing using Google Gemini AI
+  - Timeout handling for reliable processing
+  - Support for multiple image formats (PNG, JPEG, WEBP, BMP)
+- **Web Scrapers**: Automated data collection
+  - 4D scraper for Singapore 4D results
+  - Toto scraper for Singapore Toto results
+- **Services Layer**: Business logic and integrations
+  - Ticket validation and checking
+  - Notification generation
+  - Result comparison algorithms
+
+#### Database Layer
+- **Supabase (PostgreSQL)**: Cloud-hosted database
+  - User authentication and authorization
+  - Ticket storage and management
+  - Draw results archival
+  - Notification persistence
+  - Prediction logs
+
+### Data Flow
+
+1. **Ticket Upload Flow**
+   ```
+   User uploads image → FastAPI receives file → OCR processes image → 
+   Extracted data validated → Stored in Supabase → Response to user
+   ```
+
+2. **Result Checking Flow**
+   ```
+   Scheduled job → Scrapers fetch results → Results stored in DB → 
+   Checker compares tickets → Wins detected → Notifications generated
+   ```
+
+3. **Prediction Flow**
+   ```
+   Historical data collected → Backfill scripts populate data → 
+   ML models generate predictions → Stored in DB → Served via API
+   ```
+
+## API Endpoints
+
+### Base URL
+- Development: `http://localhost:8000`
+- API Prefix: `/api`
+
+### Authentication
+All endpoints except root require authentication via Supabase JWT token.
+Include the token in the Authorization header:
+```
+Authorization: Bearer <your_jwt_token>
+```
+
+---
+
+### Tickets API
+
+#### Upload Ticket
+```http
+POST /api/tickets/upload
+```
+
+Upload and process a lottery ticket image using OCR.
+
+**Request:**
+- Content-Type: `multipart/form-data`
+- Body: `file` (image file - PNG, JPEG, WEBP, or BMP)
+- Max file size: 5MB
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Ticket processed successfully",
+  "data": {
+    "game_type": "4D",
+    "numbers": ["1234", "5678"],
+    "draw_date": "2026-01-26",
+    "amount_paid": 2.00
+  }
+}
+```
+
+**Error Responses:**
+- `400`: Invalid file type
+- `413`: File too large
+- `422`: Validation error or OCR processing error
+- `500`: Unexpected server error
+
+---
+
+#### List Tickets
+```http
+GET /api/tickets/
+```
+
+Retrieve all tickets for the authenticated user.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "tickets": [
+    {
+      "id": "uuid",
+      "user_id": "uuid",
+      "game_type": "4D",
+      "numbers": ["1234"],
+      "draw_date": "2026-01-26",
+      "amount_paid": 1.00,
+      "created_at": "2026-01-26T10:30:00Z"
+    }
+  ]
+}
+```
+
+---
+
+#### Delete Ticket
+```http
+DELETE /api/tickets/{ticket_id}
+```
+
+Delete a specific ticket owned by the authenticated user.
+
+**Parameters:**
+- `ticket_id` (path): UUID of the ticket to delete
+
+**Response:**
+```json
+{
+  "message": "Ticket deleted successfully"
+}
+```
+
+**Error Responses:**
+- `404`: Ticket not found or unauthorized
+- `500`: Server error
+
+---
+
+### Notifications API
+
+#### Get Notifications
+```http
+GET /api/notifications
+```
+
+Retrieve all notifications for the authenticated user.
+
+**Response:**
+```json
+{
+  "notifications": [
+    {
+      "id": "uuid",
+      "user_id": "uuid",
+      "type": "win",
+      "title": "🎉 Congratulations! You Won!",
+      "message": "Your ticket has won a prize in the latest 4D draw!",
+      "data": {
+        "game_type": "4D",
+        "draw_date": "2026-01-19",
+        "prize_amount": "2500.00",
+        "ticket_numbers": "1234",
+        "winning_numbers": "1234, 5678, 9012"
+      },
+      "is_read": false,
+      "created_at": "2026-01-26T10:30:00Z"
+    }
+  ]
+}
+```
+
+---
+
+#### Mark Notification as Read
+```http
+PATCH /api/notifications/{notification_id}/read
+```
+
+Mark a specific notification as read.
+
+**Parameters:**
+- `notification_id` (path): ID of the notification
+
+**Response:**
+```json
+{
+  "message": "Notification marked as read",
+  "notification": { /* notification object */ }
+}
+```
+
+**Error Responses:**
+- `404`: Notification not found or unauthorized
+- `500`: Server error
+
+---
+
+#### Mark All Notifications as Read
+```http
+PATCH /api/notifications/mark-all-read
+```
+
+Mark all notifications as read for the authenticated user.
+
+**Response:**
+```json
+{
+  "message": "All notifications marked as read",
+  "count": 5
+}
+```
+
+---
+
+#### Delete Notification
+```http
+DELETE /api/notifications/{notification_id}
+```
+
+Delete a specific notification.
+
+**Parameters:**
+- `notification_id` (path): ID of the notification to delete
+
+---
+
+#### Create Mock Notification (Testing)
+```http
+POST /api/notifications/mock
+```
+
+Create a mock notification for testing purposes.
+
+**Response:**
+```json
+{
+  "message": "Mock notification created successfully",
+  "notification": { /* notification object */ }
+}
+```
+
+---
+
+### Predictions API
+
+#### Get Predictions
+```http
+GET /api/predictions/{game_type}
+```
+
+Get AI-powered predictions for the next draw (educational purposes only).
+
+**Parameters:**
+- `game_type` (path): Either `4D` or `TOTO`
+
+**Response:**
+```json
+{
+  "disclaimer": "For educational purposes only. Not financial advice.",
+  "game_type": "4D",
+  "predictions": [
+    {
+      "model_name": "Model A",
+      "predicted_numbers": ["1234", "5678"],
+      "confidence_score": 0.75,
+      "rationale": "AI model prediction based on historical draw patterns and statistical analysis."
+    }
+  ]
+}
+```
+
+**Error Responses:**
+- `400`: Invalid game_type (must be '4D' or 'TOTO')
+- `500`: Failed to fetch predictions
+
+---
+
+#### Get Historical Draws
+```http
+GET /api/predictions/history/{game_type}?limit=100
+```
+
+Retrieve historical draw data for analysis.
+
+**Parameters:**
+- `game_type` (path): Either `4D` or `TOTO`
+- `limit` (query, optional): Number of records to return (default: 100)
+
+**Status:** Not yet implemented (501)
+
+---
+
+### Root Endpoint
+
+#### Health Check
+```http
+GET /
+```
+
+Check if the API is running.
+
+**Response:**
+```json
+{
+  "message": "Welcome to the FastAPI backend!"
+}
+```
+
+---
+
 ## Project Structure
 
 ```
@@ -113,19 +462,92 @@ docker-compose up
 ├── backend/              # FastAPI backend
 │   ├── app/
 │   │   ├── api/          # API routes
+│   │   │   ├── tickets.py           # Ticket management endpoints
+│   │   │   ├── notifications.py     # Notification endpoints
+│   │   │   └── predictions.py       # Prediction endpoints
 │   │   ├── models/       # Data models
+│   │   │   ├── draw.py              # Draw result models
+│   │   │   └── ticket.py            # Ticket models
 │   │   ├── ocr/          # OCR engine
+│   │   │   ├── ocr_engine.py        # Gemini AI integration
+│   │   │   └── ocr_timeout.py       # Timeout handling
+│   │   ├── prediction/   # ML prediction models
+│   │   │   ├── backfill_4d.py       # Historical 4D data
+│   │   │   ├── backfill_toto.py     # Historical Toto data
+│   │   │   ├── prediction_4d.py     # 4D prediction logic
+│   │   │   └── prediction_toto.py   # Toto prediction logic
 │   │   ├── scrapers/     # Result scrapers
-│   │   └── services/     # Business logic
-│   └── requirements.txt
+│   │   │   ├── fourd.py             # 4D result scraper
+│   │   │   └── toto.py              # Toto result scraper
+│   │   ├── services/     # Business logic
+│   │   │   ├── dbconfig.py          # Database configuration
+│   │   │   ├── fourd_checker.py     # 4D ticket checker
+│   │   │   ├── toto_checker.py      # Toto ticket checker
+│   │   │   ├── ticket_checker.py    # Generic ticket checker
+│   │   │   └── notification_generator.py  # Notification logic
+│   │   └── main.py       # FastAPI application entry point
+│   ├── scripts/          # Utility scripts
+│   │   └── check_and_notify.py      # Automated checking script
+│   ├── tests/            # Unit tests
+│   ├── requirements.txt  # Python dependencies
+│   └── Dockerfile        # Backend container config
 ├── frontend/             # React frontend
 │   ├── src/
 │   │   ├── components/   # Reusable components
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── NotificationCard.jsx
+│   │   │   ├── PredictionCard.jsx
+│   │   │   ├── TicketDetails.jsx
+│   │   │   └── LoadingSpinner.jsx
 │   │   ├── pages/        # Page components
-│   │   └── services/     # API clients
-│   └── package.json
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── SignUp.jsx
+│   │   │   ├── UploadTicket.jsx
+│   │   │   ├── TicketList.jsx
+│   │   │   ├── Notifications.jsx
+│   │   │   ├── PredictionPage.jsx
+│   │   │   ├── Verify.jsx
+│   │   │   └── VerifyEmail.jsx
+│   │   ├── services/     # API clients
+│   │   │   ├── api.js               # Axios API client
+│   │   │   └── supabaseClient.js    # Supabase client
+│   │   ├── App.jsx       # Main application component
+│   │   └── main.jsx      # Application entry point
+│   ├── package.json      # Node.js dependencies
+│   ├── vite.config.js    # Vite configuration
+│   └── Dockerfile        # Frontend container config
+├── docker-compose.yml    # Multi-container orchestration
 └── README.md
 ```
+
+## Environment Variables
+
+### Backend (.env)
+```env
+# Supabase Configuration
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_KEY=your_supabase_service_role_key
+
+# Google Gemini AI (for OCR)
+GOOGLE_API_KEY=your_google_gemini_api_key
+
+# Optional: Database URL if using direct PostgreSQL connection
+DATABASE_URL=postgresql://user:password@host:port/database
+```
+
+### Frontend (.env)
+```env
+# Supabase Configuration
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+## API Documentation
+
+When the backend is running, interactive API documentation is available at:
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
 
 ## License
 
