@@ -99,14 +99,11 @@ export default function UploadTicket() {
       // Upload ticket for immediate OCR processing
       const result = await uploadTicket(selectedFile);
       
-      console.log('Upload response:', result);
-      console.log('Ticket data:', result.data);
-      
       // Navigate to verify page with ticket data (extract data field from response)
       navigate('/verify', { state: { ticketData: result.data } });
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Failed to upload ticket. Please try again.');
+      alert(`${error.response.data.detail}`);
     } finally {
       setUploading(false);
     }
