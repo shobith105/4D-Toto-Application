@@ -1,4 +1,4 @@
-# 4D & Toto Application
+# TicketSense
 
 A comprehensive lottery management application for tracking and managing 4D and Toto lottery tickets. This application helps users upload their tickets, automatically check results, receive notifications about winnings, and view predictions.
 
@@ -684,5 +684,6 @@ When the backend is running, interactive API documentation is available at:
 - **ReDoc**: http://localhost:8000/redoc
 
 ## License
+
 
 This project is licensed under the MIT License.
