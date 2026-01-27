@@ -3,7 +3,6 @@ import NotificationCard from '../components/NotificationCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { 
   getNotifications, 
-  createMockNotification, 
   markNotificationAsRead, 
   markAllNotificationsAsRead,
   deleteNotification 
@@ -28,17 +27,6 @@ const Notifications = () => {
       alert('Failed to load notifications. Please try again.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCreateMockNotification = async () => {
-    try {
-      await createMockNotification();
-      await fetchNotifications();
-      alert('Mock notification created successfully!');
-    } catch (error) {
-      console.error('Error creating mock notification:', error);
-      alert('Failed to create mock notification. Please try again.');
     }
   };
 
@@ -107,15 +95,6 @@ const Notifications = () => {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full sm:w-auto">
-              <button
-                onClick={handleCreateMockNotification}
-                className="px-4 md:px-6 py-2 md:py-3 rounded-lg transition-all font-semibold text-sm md:text-base"
-                style={{background: '#7c3aed', color: 'white'}}
-                onMouseEnter={(e) => e.target.style.background = '#6d28d9'}
-                onMouseLeave={(e) => e.target.style.background = '#7c3aed'}
-              >
-                Create Mock Notification
-              </button>
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
