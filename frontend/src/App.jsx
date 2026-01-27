@@ -13,6 +13,7 @@ import Verify from "./pages/Verify";
 import Notifications from "./pages/Notifications";
 import Navbar from "./components/Navbar";
 import PredictionPage from "./pages/PredictionPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
  
@@ -26,13 +27,13 @@ function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
       
       {/* App routes - With Navbar */}
-      <Route path="/dashboard" element={<><Navbar /><Dashboard /></>} />
-      <Route path="/upload" element={<><Navbar /><UploadTicket /></>} />
-      <Route path="/verify" element={<><Navbar /><Verify /></>} />
-      <Route path="/details" element={<><Navbar /><TicketList /></>} />
-      <Route path="/tickets" element={<><Navbar /><TicketList /></>} />
-      <Route path="/notifications" element={<><Navbar /><Notifications /></>} />
-      <Route path="/predictions" element={<><Navbar /><PredictionPage /></>} />
+      <Route path="/dashboard" element={<ProtectedRoute><Navbar /><Dashboard /></ProtectedRoute>} />
+      <Route path="/upload" element={<ProtectedRoute><Navbar /><UploadTicket /></ProtectedRoute>} />
+      <Route path="/verify" element={<ProtectedRoute><Navbar /><Verify /></ProtectedRoute>} />
+      <Route path="/details" element={<ProtectedRoute><Navbar /><TicketList /></ProtectedRoute>} />
+      <Route path="/tickets" element={<ProtectedRoute><Navbar /><TicketList /></ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute><Navbar /><Notifications /></ProtectedRoute>} />
+      <Route path="/predictions" element={<ProtectedRoute><Navbar /><PredictionPage /></ProtectedRoute>} />
 
       {/* Add more routes here as needed */}
     </Routes>
