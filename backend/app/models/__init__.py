@@ -1,7 +1,6 @@
 # Pydantic models for FastAPI request/response validation
 
 from .ticket import TicketCreateData
-from .draw import DrawResult, DrawCheckRequest
 
 
 __all__ = [
