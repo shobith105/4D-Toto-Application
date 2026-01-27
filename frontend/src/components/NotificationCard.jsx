@@ -120,22 +120,22 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
         )}
       </div>
 
-      <div className="flex items-start gap-4 mb-6">
+      <div className="flex items-start gap-3 md:gap-4 mb-6">
         <div className="flex-shrink-0 mt-1">{getIcon()}</div>
-        <div className="flex-1 min-w-0 pr-24">
-          <h3 className="text-2xl font-bold text-white mb-1">{title}</h3>
-          <p style={{color: '#cbd5e1'}} className="text-base">{message}</p>
+        <div className="flex-1 min-w-0 pr-16 md:pr-24">
+          <h3 className="text-xl md:text-2xl font-bold text-white mb-1">{title}</h3>
+          <p style={{color: '#cbd5e1'}} className="text-sm md:text-base">{message}</p>
         </div>
       </div>
 
       {/* 1. CELEBRATION SECTION - Prize Amount First! */}
       {(parsedData.prize_amount || parsedData.total_payout) && (
-        <div className="mb-6 p-6 rounded-xl text-center" style={{background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)', border: '1px solid rgba(16, 185, 129, 0.3)'}}>
-          <div className="text-sm font-semibold mb-2" style={{color: '#6ee7b7'}}>🎉 Congratulations!</div>
-          <div className="text-5xl font-bold mb-1" style={{color: '#10b981'}}>
+        <div className="mb-6 p-4 md:p-6 rounded-xl text-center" style={{background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)', border: '1px solid rgba(16, 185, 129, 0.3)'}}>
+          <div className="text-xs md:text-sm font-semibold mb-2" style={{color: '#6ee7b7'}}>🎉 Congratulations!</div>
+          <div className="text-3xl md:text-5xl font-bold mb-1" style={{color: '#10b981'}}>
             ${(parsedData.prize_amount || parsedData.total_payout).toLocaleString()}
           </div>
-          <div className="text-sm" style={{color: '#94a3b8'}}>Total Winnings</div>
+          <div className="text-xs md:text-sm" style={{color: '#94a3b8'}}>Total Winnings</div>
         </div>
       )}
 
@@ -191,7 +191,7 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
 
       {/* Basic Info Grid */}
       <div className="mb-6 p-4 rounded-lg" style={{background: '#1e293b'}}>
-        <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           {parsedData.game_type && (
             <div>
               <span style={{color: '#64748b'}}>Game Type:</span>
@@ -270,17 +270,17 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
         )}
       </div>
 
-      <div className="flex items-start gap-4 mb-6">
+      <div className="flex items-start gap-3 md:gap-4 mb-6">
         <div className="flex-shrink-0 mt-1">{getIcon()}</div>
-        <div className="flex-1 min-w-0 pr-24">
-          <h3 className="text-xl font-bold text-white mb-1">{title}</h3>
-          <p style={{color: '#94a3b8'}} className="text-sm">{message}</p>
+        <div className="flex-1 min-w-0 pr-16 md:pr-24">
+          <h3 className="text-lg md:text-xl font-bold text-white mb-1">{title}</h3>
+          <p style={{color: '#94a3b8'}} className="text-xs md:text-sm">{message}</p>
         </div>
       </div>
 
       {/* Basic Info Grid */}
       <div className="mb-6 p-4 rounded-lg" style={{background: '#1e293b'}}>
-        <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           {parsedData.game_type && (
             <div>
               <span style={{color: '#64748b'}}>Game Type:</span>
@@ -408,7 +408,7 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
 
         {parsedData.game_type === '4D' && (
           <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {parsedData.draw_winning_numbers.first && (
                 <div className="rounded-lg p-3" style={{
                   background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%)',
@@ -442,7 +442,7 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
             {parsedData.draw_winning_numbers.starter && parsedData.draw_winning_numbers.starter.length > 0 && (
               <div>
                 <div className="text-xs mb-2" style={{color: '#94a3b8'}}>Starter Prizes</div>
-                <div className="grid grid-cols-6 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {parsedData.draw_winning_numbers.starter.map((num, idx) => (
                     <span key={idx} className="inline-flex items-center justify-center px-2 py-1 font-mono text-xs rounded"
                       style={{background: '#0f172a', color: '#cbd5e1', border: '1px solid #475569'}}>
@@ -457,7 +457,7 @@ const NotificationCard = ({ notification, onMarkAsRead, onDelete }) => {
             {parsedData.draw_winning_numbers.consolation && parsedData.draw_winning_numbers.consolation.length > 0 && (
               <div>
                 <div className="text-xs mb-2" style={{color: '#94a3b8'}}>Consolation Prizes</div>
-                <div className="grid grid-cols-6 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {parsedData.draw_winning_numbers.consolation.map((num, idx) => (
                     <span key={idx} className="inline-flex items-center justify-center px-2 py-1 font-mono text-xs rounded"
                       style={{background: '#0f172a', color: '#cbd5e1', border: '1px solid #475569'}}>

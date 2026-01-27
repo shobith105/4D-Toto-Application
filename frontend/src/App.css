@@ -9,8 +9,14 @@
   background-color: #0f172a; /* Slate 900 */
   border: 1px solid #1e293b; /* Slate 800 - Subtle border for depth */
   border-radius: 12px;
-  padding: 2em;
+  padding: 1.5em;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: 2em;
+  }
 }
 
 .card:hover {
@@ -25,8 +31,16 @@
   color: white;
   font-weight: 600;
   border-radius: 8px;
-  padding: 0.75rem 1.5rem;
+  padding: 0.625rem 1.25rem;
   transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .btn-primary {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
 }
 
 .btn-primary:hover {
@@ -40,8 +54,16 @@
   color: white;
   font-weight: 600;
   border-radius: 8px;
-  padding: 0.75rem 1.5rem;
+  padding: 0.625rem 1.25rem;
   transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+  .btn-success {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
 }
 
 .btn-success:hover {

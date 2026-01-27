@@ -117,24 +117,24 @@ export default function UploadTicket() {
   };
 
   return (
-    <div className="min-h-screen text-white p-6" style={{backgroundColor: '#020617'}}>
+    <div className="min-h-screen text-white p-4 md:p-6" style={{backgroundColor: '#020617'}}>
       {/* Loading Overlay */}
       {uploading && <LoadingSpinner message="Processing Ticket" />}
       
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl backdrop-blur mb-4" style={{background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)'}}>
-            <svg className="w-7 h-7" style={{color: '#10b981'}} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="text-center mb-6 md:mb-8">
+          <div className="inline-flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-2xl backdrop-blur mb-3 md:mb-4" style={{background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)'}}>
+            <svg className="w-6 h-6 md:w-7 md:h-7" style={{color: '#10b981'}} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Upload Ticket</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Upload Ticket</h1>
           <p style={{color: '#cbd5e1'}}>Snap a photo or upload from gallery</p>
         </div>
 
         {/* Upload Card */}
-        <div className="rounded-2xl shadow-2xl p-8" style={{background: '#0f172a', border: '1px solid #1e293b'}}>
+        <div className="rounded-2xl shadow-2xl p-4 md:p-8" style={{background: '#0f172a', border: '1px solid #1e293b'}}>
           <form onSubmit={handleUpload} className="space-y-6">
             {/* Camera View */}
             {isCameraOpen ? (
@@ -178,13 +178,13 @@ export default function UploadTicket() {
                     <img 
                       src={preview} 
                       alt="Ticket preview" 
-                      className="w-full h-auto object-contain max-h-96"
+                      className="w-full h-auto object-contain max-h-64 md:max-h-96"
                     />
                   </div>
                 ) : (
-                  <div className="rounded-lg p-16 text-center" style={{border: '2px dashed #334155', background: '#1e293b'}}>
+                  <div className="rounded-lg p-8 md:p-16 text-center" style={{border: '2px dashed #334155', background: '#1e293b'}}>
                     <svg 
-                      className="w-16 h-16 mx-auto mb-4" 
+                      className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4" 
                       style={{color: '#64748b'}}
                       fill="none" 
                       stroke="currentColor" 
@@ -197,18 +197,18 @@ export default function UploadTicket() {
                         d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
                       />
                     </svg>
-                    <p className="font-semibold text-white mb-1">Drag & Drop your ticket here</p>
-                    <p className="text-sm" style={{color: '#94a3b8'}}>or choose an option below</p>
+                    <p className="font-semibold text-white mb-1 text-sm md:text-base">Drag & Drop your ticket here</p>
+                    <p className="text-xs md:text-sm" style={{color: '#94a3b8'}}>or choose an option below</p>
                   </div>
                 )}
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                   {/* Camera Button */}
                   <button
                     type="button"
                     onClick={openCamera}
-                    className="flex flex-col items-center justify-center p-6 rounded-lg cursor-pointer transition-all"
+                    className="flex flex-col items-center justify-center p-4 md:p-6 rounded-lg cursor-pointer transition-all"
                     style={{border: '2px solid #334155', background: '#1e293b'}}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = '#7c3aed';
@@ -220,7 +220,7 @@ export default function UploadTicket() {
                     }}
                   >
                     <svg 
-                      className="w-10 h-10 mb-2" 
+                      className="w-8 h-8 md:w-10 md:h-10 mb-2" 
                       style={{color: '#cbd5e1'}}
                       fill="none" 
                       stroke="currentColor" 
@@ -239,7 +239,7 @@ export default function UploadTicket() {
                         d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" 
                       />
                     </svg>
-                    <span className="text-sm font-medium text-white">Take Photo</span>
+                    <span className="text-xs md:text-sm font-medium text-white">Take Photo</span>
                   </button>
 
                   {/* Gallery Button */}
@@ -254,7 +254,7 @@ export default function UploadTicket() {
                     />
                     <label
                       htmlFor="gallery-input"
-                      className="flex flex-col items-center justify-center p-6 rounded-lg cursor-pointer transition-all"
+                      className="flex flex-col items-center justify-center p-4 md:p-6 rounded-lg cursor-pointer transition-all"
                       style={{border: '2px solid #334155', background: '#1e293b'}}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.borderColor = '#10b981';
@@ -266,7 +266,7 @@ export default function UploadTicket() {
                       }}
                     >
                       <svg 
-                        className="w-10 h-10 mb-2" 
+                        className="w-8 h-8 md:w-10 md:h-10 mb-2" 
                         style={{color: '#cbd5e1'}}
                         fill="none" 
                         stroke="currentColor" 
@@ -279,7 +279,7 @@ export default function UploadTicket() {
                           d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
                         />
                       </svg>
-                      <span className="text-sm font-medium text-white">Choose from Gallery</span>
+                      <span className="text-xs md:text-sm font-medium text-white">Choose from Gallery</span>
                     </label>
                   </div>
                 </div>
