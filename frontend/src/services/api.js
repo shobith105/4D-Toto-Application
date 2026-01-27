@@ -1,8 +1,11 @@
 import axios from 'axios';
 import supabase from './supabaseClient';
 
-//testing for vercel
-const API_URL = import.meta.env.VITE_API_URL + '/api';
+//for deloyment down the road
+//const API_URL = import.meta.env.VITE_API_URL + '/api';
+
+//for local testing
+const API_URL="http://localhost:8000/api";
 
 /**
  * Get authorization headers with Supabase JWT token
