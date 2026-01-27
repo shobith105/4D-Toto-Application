@@ -439,7 +439,7 @@ GET /api/notifications
 
 Retrieve all notifications for the authenticated user.
 
-**Response:**
+**Response (TOTO Win):**
 ```json
 {
   "notifications": [
@@ -448,13 +448,49 @@ Retrieve all notifications for the authenticated user.
       "user_id": "uuid",
       "type": "win",
       "title": "🎉 Congratulations! You Won!",
-      "message": "Your ticket has won a prize in the latest 4D draw!",
+      "message": "Your ticket has won a prize in the latest TOTO draw!",
       "data": {
-        "game_type": "4D",
-        "draw_date": "2026-01-19",
-        "prize_amount": "2500.00",
-        "ticket_numbers": "1234",
-        "winning_numbers": "1234, 5678, 9012"
+        "draw_no": 4071,
+        "draw_date": "2025-04-21",
+        "game_type": "TOTO",
+        "ticket_id": "10e088ba-6008-4b6c-bdaa-407a784af473",
+        "prize_group": 3,
+        "prize_amount": 4302,
+        "total_payout": 4302,
+        "ticket_numbers": [
+          {
+            "label": "A",
+            "numbers": [5, 10, 13, 18, 21, 27, 37]
+          },
+          {
+            "label": "B",
+            "numbers": [2, 17, 30, 37, 38, 41, 43]
+          }
+        ],
+        "winning_combos": [
+          {
+            "combination": [2, 17, 30, 37, 41, 43],
+            "prize_group": 3,
+            "main_matches": 5,
+            "has_additional": false
+          },
+          {
+            "combination": [17, 30, 37, 38, 41, 43],
+            "prize_group": 3,
+            "main_matches": 5,
+            "has_additional": false
+          }
+        ],
+        "counts_by_group": {
+          "3": 2,
+          "5": 5
+        },
+        "ticket_check_id": "6af8401e-5c95-4114-b4df-ffc19a2ae718",
+        "draw_winning_numbers": {
+          "winning_numbers": [1, 17, 30, 37, 41, 43],
+          "additional_number": 32
+        },
+        "winning_combinations": 7
       },
       "is_read": false,
       "created_at": "2026-01-26T10:30:00Z"
@@ -462,6 +498,27 @@ Retrieve all notifications for the authenticated user.
   ]
 }
 ```
+
+**Data Fields (TOTO):**
+- `draw_no`: Draw number
+- `draw_date`: Draw date (ISO format)
+- `game_type`: `TOTO`
+- `ticket_id`: ID of the winning ticket (UUID)
+- `prize_group`: Highest prize group won (1-7)
+- `prize_amount`: Total prize amount won
+- `total_payout`: Total payout amount
+- `ticket_numbers`: Array of ticket entries with labels and selected numbers
+- `winning_combos`: Array of winning combinations from the ticket
+  - `combination`: The 6 numbers that won
+  - `prize_group`: Prize group for this combination
+  - `main_matches`: Number of main number matches
+  - `has_additional`: Whether additional number was matched
+- `counts_by_group`: Count of wins per prize group
+- `ticket_check_id`: ID of the check operation (UUID)
+- `draw_winning_numbers`: Winning numbers for the draw
+  - `winning_numbers`: Array of 6 main winning numbers
+  - `additional_number`: Additional number
+- `winning_combinations`: Total number of winning combinations
 
 ---
 
