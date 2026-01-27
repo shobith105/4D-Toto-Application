@@ -88,7 +88,7 @@ npm install
 3. Create a `.env` file in the frontend directory:
 ```env
 VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_supabase_anon_key
 VITE_API_URL=http://localhost:8000
 ```
 
@@ -706,24 +706,6 @@ Check if the API is running.
 │   └── Dockerfile        # Frontend container config
 ├── docker-compose.yml    # Multi-container orchestration
 └── README.md
-```
-
-## Environment Variables
-
-### Backend (.env)
-```env
-# Supabase Configuration
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-GEMINI_API_KEY=your_gemini_api_key
-```
-
-### Frontend (.env)
-```env
-# Supabase Configuration
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_supabase_anon_key
-VITE_API_URL=http://localhost:8000
 ```
 
 ## API Documentation
