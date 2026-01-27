@@ -90,12 +90,12 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen text-white" style={{backgroundColor: '#020617'}}>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 md:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+        <div className="mb-6 md:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 md:mb-4 gap-3">
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Notifications</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Notifications</h1>
               <p style={{color: '#cbd5e1'}}>
                 {unreadCount > 0 ? (
                   <span>
@@ -106,10 +106,10 @@ const Notifications = () => {
                 )}
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full sm:w-auto">
               <button
                 onClick={handleCreateMockNotification}
-                className="px-6 py-3 rounded-lg transition-all font-semibold"
+                className="px-4 md:px-6 py-2 md:py-3 rounded-lg transition-all font-semibold text-sm md:text-base"
                 style={{background: '#7c3aed', color: 'white'}}
                 onMouseEnter={(e) => e.target.style.background = '#6d28d9'}
                 onMouseLeave={(e) => e.target.style.background = '#7c3aed'}
@@ -119,7 +119,7 @@ const Notifications = () => {
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
-                  className="px-6 py-3 rounded-lg transition-all font-semibold"
+                  className="px-4 md:px-6 py-2 md:py-3 rounded-lg transition-all font-semibold text-sm md:text-base"
                   style={{background: '#10b981', color: 'white'}}
                   onMouseEnter={(e) => e.target.style.background = '#059669'}
                   onMouseLeave={(e) => e.target.style.background = '#10b981'}
@@ -131,10 +131,10 @@ const Notifications = () => {
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex gap-2" style={{borderBottom: '1px solid #334155'}}>
+          <div className="flex gap-1 md:gap-2 overflow-x-auto" style={{borderBottom: '1px solid #334155'}}>
             <button
               onClick={() => setFilter('all')}
-              className="px-6 py-3 font-semibold transition-colors"
+              className="px-4 md:px-6 py-2 md:py-3 font-semibold transition-colors text-sm md:text-base whitespace-nowrap"
               style={{
                 color: filter === 'all' ? 'white' : '#94a3b8',
                 borderBottom: filter === 'all' ? '2px solid #7c3aed' : 'none'
@@ -146,7 +146,7 @@ const Notifications = () => {
             </button>
             <button
               onClick={() => setFilter('unread')}
-              className="px-6 py-3 font-semibold transition-colors"
+              className="px-4 md:px-6 py-2 md:py-3 font-semibold transition-colors text-sm md:text-base whitespace-nowrap"
               style={{
                 color: filter === 'unread' ? 'white' : '#94a3b8',
                 borderBottom: filter === 'unread' ? '2px solid #7c3aed' : 'none'
@@ -158,7 +158,7 @@ const Notifications = () => {
             </button>
             <button
               onClick={() => setFilter('read')}
-              className="px-6 py-3 font-semibold transition-colors"
+              className="px-4 md:px-6 py-2 md:py-3 font-semibold transition-colors text-sm md:text-base whitespace-nowrap"
               style={{
                 color: filter === 'read' ? 'white' : '#94a3b8',
                 borderBottom: filter === 'read' ? '2px solid #7c3aed' : 'none'
