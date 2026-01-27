@@ -62,7 +62,7 @@ pip install -r requirements.txt
 4. Create a `.env` file in the backend directory with your configuration:
 ```env
 SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_key
 GEMINI_API_KEY=your_gemini_api_key
 ```
 
