@@ -12,7 +12,7 @@ app.include_router(tickets.router, prefix="/api")
 app.include_router(predictions.router, prefix="/api")
 app.include_router(notifications.router, prefix="/api")
 
-origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+origins = ["http://localhost:5173", "http://127.0.0.1:5173", "https://ticket-sense-iota.vercel.app","https://ticket-sense-1vuk4gdqg-shobith105s-projects.vercel.app"]
 
 # Add CORS middleware
 app.add_middleware(
