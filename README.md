@@ -36,7 +36,7 @@ A comprehensive lottery management application for tracking and managing 4D and 
 
 - Python 3.11+
 - Node.js 18+
-- Docker (optional)
+- Docker (optional, for containerized deployment)
 
 ### Backend Setup
 
@@ -98,14 +98,6 @@ npm run dev
 ```
 
 The frontend will be available at `http://localhost:5173`
-
-### Docker Setup (Alternative)
-
-If you prefer using Docker, you can run both services using Docker Compose:
-
-```bash
-docker-compose up
-```
 
 ## Architecture Overview
 
