@@ -1,11 +1,11 @@
 FROM node:20-alpine
-
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm ci
-
 COPY . .
 
-EXPOSE 5173
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
+RUN npm run build
+
+EXPOSE 8080
+CMD ["sh", "-c", "npm run preview -- --host 0.0.0.0 --port $PORT"]
